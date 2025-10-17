@@ -1,3 +1,38 @@
+function calculateOptimalWidth(shortcuts) {
+  const minWidth = 280;
+  const maxWidth = 460; // Reduzido para evitar popup muito largo
+  const iconWidth = 42;
+  const iconGap = 12;
+  const padding = 32; // 16px de cada lado
+  
+  // Calcular largura baseada no número de atalhos + botão de edição
+  const totalIcons = shortcuts.length + 1; // +1 para o botão de edição
+  
+  // Se não há atalhos, usar largura mínima otimizada
+  if (shortcuts.length === 0) {
+    return minWidth;
+  }
+  
+  // Calcular quantos ícones cabem em uma linha com a largura máxima
+  const maxIconsPerRow = Math.floor((maxWidth - padding + iconGap) / (iconWidth + iconGap));
+  
+  // Se todos os ícones cabem em uma linha, calcular largura exata
+  if (totalIcons <= maxIconsPerRow) {
+    const iconsWidth = (totalIcons * iconWidth) + ((totalIcons - 1) * iconGap);
+    const calculatedWidth = iconsWidth + padding;
+    return Math.max(minWidth, calculatedWidth);
+  }
+  
+  // Se não cabem, usar largura máxima (permitirá quebra de linha)
+  return maxWidth;
+}
+
+function applyOptimalWidth(shortcuts) {
+  const body = document.body;
+  const optimalWidth = calculateOptimalWidth(shortcuts);
+  body.style.width = `${optimalWidth}px`;
+}
+
 const el = id => document.getElementById(id);
 
 let isEditMode = false;
@@ -103,6 +138,11 @@ function renderIconBar(shortcuts) {
   // Adicionar botão de edição
   const editButton = createEditButton();
   bar.appendChild(editButton);
+  
+  // Aplicar largura otimizada apenas no modo de visualização (não edição)
+  if (!isEditMode) {
+    applyOptimalWidth(shortcuts);
+  }
 }
 
 function fillFormForEdit(shortcut, index) {
@@ -164,9 +204,9 @@ function showMessage(text, type = 'info') {
   if (messageText) messageText.innerHTML = text;
   
   if (type === 'error') {
-    messageElement.style.background = 'rgba(255,60,60,0.06)';
+    messageElement.style.background = 'var(--error-bg)';
   } else {
-    messageElement.style.background = 'rgba(255,255,255,0.02)';
+    messageElement.style.background = 'var(--bg-overlay-light)';
   }
   
   // Auto-ocultar após 5s
@@ -180,13 +220,19 @@ async function toggleEditMode(enable) {
   isEditMode = !!enable;
   const editArea = el('edit-area');
   const iconBar = el('icon-bar');
+  const body = document.body;
   
   if (isEditMode) {
     editArea.classList.remove('hidden');
     iconBar.classList.add('hidden');
+    // No modo de edição, usar largura fixa maior para o formulário
+    body.style.width = '420px';
   } else {
     editArea.classList.add('hidden');
     iconBar.classList.remove('hidden');
+    // No modo de visualização, aplicar largura otimizada
+    const shortcuts = await loadShortcuts();
+    applyOptimalWidth(shortcuts);
   }
   
   const shortcuts = await loadShortcuts();
@@ -201,6 +247,11 @@ async function init() {
   const shortcuts = await loadShortcuts();
   renderShortcuts(shortcuts, currentUrl);
   renderIconBar(shortcuts);
+  
+  // Aplicar largura otimizada na inicialização se não estiver em modo de edição
+  if (!isEditMode) {
+    applyOptimalWidth(shortcuts);
+  }
 }
 
 function setupEventListeners() {
@@ -249,6 +300,11 @@ function setupEventListeners() {
       await saveShortcuts(shortcuts);
       addForm.reset();
       await init();
+      
+      // Após adicionar/editar, reaplicar largura otimizada se sair do modo de edição
+      if (!isEditMode) {
+        applyOptimalWidth(shortcuts);
+      }
     });
   }
 }

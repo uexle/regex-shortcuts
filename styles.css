@@ -1,40 +1,67 @@
 :root {
     --bg: #0f1720;
-    /* dark */
     --panel: #0b1220;
     --muted: #9aa4b2;
     --accent: #1f6feb;
     --card: #111827;
+    
+    /* Text colors */
+    --text-primary: #e6eef8;
+    --text-white: #fff;
+    --text-input: #dfeafe;
+    --text-placeholder: #7d8894;
+    --text-message: #ffd7b5;
+    
+    /* Border colors */
+    --border-primary: rgba(255, 255, 255, 0.06);
+    --border-secondary: rgba(255, 255, 255, 0.04);
+    --border-divider: rgba(255, 255, 255, 0.03);
+    
+    /* Background colors */
+    --bg-overlay-light: rgba(255, 255, 255, 0.02);
+    --bg-overlay-lighter: rgba(255, 255, 255, 0.01);
+    --bg-panel-gradient: linear-gradient(180deg, var(--bg-overlay-light), var(--bg-overlay-lighter));
+    
+    /* Shadow colors */
+    --shadow-primary: rgba(2, 6, 23, 0.5);
+    --shadow-accent: rgba(31, 111, 235, 0.08);
+    --shadow-edit: rgba(31, 111, 235, 0.12);
+    
+    /* Error colors */
+    --error-bg: rgba(255, 60, 60, 0.06);
 }
 
 html,
 body {
     margin: 0;
     padding: 0;
-    /* external popup rounded corners */
     border-radius: 14px;
     overflow: hidden;
 }
 
 body {
     font-family: Inter, Arial, sans-serif;
-    width: 420px;
+    min-width: 280px;
+    max-width: 460px;
+    width: fit-content;
     padding: 16px;
     background: var(--bg);
-    color: #e6eef8;
+    color: var(--text-primary);
 }
 
 h1 {
     font-size: 18px;
     margin: 0 0 10px;
-    color: #fff;
+    color: var(--text-white);
 }
 
 .panel {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+    background: var(--bg-panel-gradient);
     padding: 14px;
     border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-secondary);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 label {
@@ -50,32 +77,33 @@ textarea {
     box-sizing: border-box;
     padding: 12px;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: #dfeafe;
+    border: 1px solid var(--border-primary);
+    color: var(--text-input);
     border-radius: 10px;
 }
 
 input::placeholder {
-    color: #7d8894;
+    color: var(--text-placeholder);
 }
 
 button {
     padding: 10px 12px;
     border-radius: 8px;
     background: var(--accent);
-    color: #fff;
+    color: var(--text-white);
     border: none;
     cursor: pointer;
 }
 
-.shortcut {
+.shortcut,
+.shortcut-item {
     display: flex;
     gap: 14px;
     align-items: center;
     margin-top: 12px;
     padding: 12px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--bg-overlay-light);
 }
 
 .shortcut button {
@@ -93,12 +121,13 @@ button {
     display: flex;
     gap: 12px;
     align-items: center;
-    margin: 14px 0;
     flex-wrap: wrap;
+    justify-content: flex-start;
+    width: fit-content;
 }
 
-/* circular icon buttons with visible borders and consistent icon size */
-.icon-btn {
+.icon-btn,
+.icon-bar-item {
     width: 42px;
     height: 42px;
     display: flex;
@@ -107,18 +136,20 @@ button {
     border-radius: 50%;
     background: transparent;
     cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-primary);
     transition: all .12s ease;
 }
 
-.icon-btn:hover {
+.icon-btn:hover,
+.icon-bar-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(2, 6, 23, 0.5);
+    box-shadow: 0 6px 18px var(--shadow-primary);
 }
 
-.icon-btn .bi {
+.icon-btn .bi,
+.icon-bar-item .bi {
     font-size: 18px;
-    color: #dbeafe;
+    color: var(--text-input);
     width: 18px;
     height: 18px;
     display: inline-block;
@@ -126,7 +157,6 @@ button {
     text-align: center;
 }
 
-/* hide labels on icon bar (no names on buttons) */
 .icon-label {
     display: none;
 }
@@ -139,11 +169,10 @@ button {
 hr {
     border: 0;
     height: 1px;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--border-divider);
     margin: 10px 0;
 }
 
-/* edit area styles */
 #edit-area {
     margin-top: 10px;
 }
@@ -163,48 +192,31 @@ hr {
     align-items: center;
     justify-content: center;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    color: #dbeafe;
+    border: 1px solid var(--border-secondary);
+    color: var(--text-input);
 }
 
 .round-btn:hover {
-    background: rgba(255, 255, 255, 0.02);
-}
-
-/* edit list row */
-.shortcut {
+    background: var(--bg-overlay-light);
     align-items: center;
 }
 
-.shortcut .icon-wrap {
-    flex: 0 0 42px;
-}
-
-.shortcut .name {
-    font-size: 14px;
-    color: #e6eef8;
-    margin-left: 10px;
-}
-
-.actions {
-    display: flex;
-    gap: 12px;
-    margin-left: auto;
-}
-
-.actions button {
+.actions button,
+.edit-btn,
+.delete-btn {
     padding: 8px 10px;
     border-radius: 8px;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    color: #dbeafe;
+    border: 1px solid var(--border-secondary);
+    color: var(--text-input);
 }
 
-.actions button:hover {
-    background: rgba(255, 255, 255, 0.02);
+.actions button:hover,
+.edit-btn:hover,
+.delete-btn:hover {
+    background: var(--bg-overlay-light);
 }
 
-/* form spacing */
 #add-form input {
     margin-top: 8px;
     margin-bottom: 12px;
@@ -222,27 +234,25 @@ hr {
     margin-top: 4px;
 }
 
-/* highlighted style for the last action button (edit pencil) */
 .icon-btn.edit-action {
-    border-color: #22c55e;
-    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.12);
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px var(--shadow-edit);
 }
 
 .icon-btn.edit-action .bi {
-    color: #22c55e;
+    color: var(--accent);
 }
 
 .message-card {
-    /* hidden by default; visibility controlled by .visible */
     align-items: center;
     justify-content: space-between;
     gap: 14px;
     margin: 10px 0;
     padding: 12px 14px;
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    color: #ffd7b5;
+    background: var(--bg-overlay-light);
+    border: 1px solid var(--border-secondary);
+    color: var(--text-message);
     display: none;
 }
 
@@ -262,13 +272,12 @@ hr {
     height: 28px;
     border-radius: 6px;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: #ffd7b5;
+    border: 1px solid var(--border-primary);
+    color: var(--text-message);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0;
-    /* override global button margin */
     align-self: center;
 }
 
@@ -279,23 +288,17 @@ hr {
     box-sizing: border-box;
 }
 
-/* o input ocupa todo o espaço disponível e combina visualmente com o botão */
 .icon-input-wrap input {
     flex: 1 1 auto;
     min-width: 0;
-    /* evita overflow em flex containers */
     box-sizing: border-box;
     padding: 12px;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: #dfeafe;
+    border: 1px solid var(--border-primary);
+    color: var(--text-input);
     border-radius: 10px 0 0 10px;
-    /* arredondamento à esquerda, "colado" ao botão à direita */
     height: 44px;
-    /* garante mesma altura do botão */
 }
-
-/* link estilizado como um botão à direita do input, mesmo tamanho e borda combinando */
 .icon-help-link {
     margin-top: 8px;
     margin-bottom: 12px;
@@ -305,11 +308,9 @@ hr {
     width: 44px;
     height: 44px;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-primary);
     border-left: none;
-    /* evita borda dupla entre input e botão */
     border-radius: 0 10px 10px 0;
-    /* arredondamento à direita */
     color: var(--muted);
     font-size: 14px;
     text-decoration: none;
@@ -320,13 +321,12 @@ hr {
 
 .icon-help-link:hover,
 .icon-help-link:focus {
-    background: rgba(255, 255, 255, 0.02);
-    border-color: rgba(255, 255, 255, 0.04);
-    color: #fff;
+    background: var(--bg-overlay-light);
+    border-color: var(--border-secondary);
+    color: var(--text-white);
     outline: none;
 }
 
-/* icone interno com tamanho adequado */
 .icon-help-link .bi {
     font-size: 16px;
     width: 16px;
@@ -336,14 +336,12 @@ hr {
     color: inherit;
 }
 
-/* foco no input mantém a aparência integrada */
 .icon-input-wrap input:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 6px 18px rgba(2, 6, 23, 0.08);
+    box-shadow: 0 6px 18px var(--shadow-accent);
 }
 
-/* Estilos para ocultar/exibir elementos */
 .hidden {
     display: none !important;
 }
@@ -352,77 +350,25 @@ hr {
     display: flex !important;
 }
 
-/* Estilos para elementos de atalho dinâmicos */
-.shortcut-item {
-    display: flex;
-    gap: 14px;
-    align-items: center;
-    margin-top: 12px;
-    padding: 12px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.02);
-}
-
-.shortcut-icon-wrap {
+.shortcut-icon-wrap,
+.shortcut .icon-wrap {
     flex: 0 0 42px;
 }
 
-.shortcut-name {
+.shortcut-name,
+.shortcut .name {
     font-size: 14px;
-    color: #e6eef8;
+    color: var(--text-primary);
     margin-left: 10px;
 }
 
-.shortcut-actions {
+.shortcut-actions,
+.actions {
     display: flex;
     gap: 12px;
     margin-left: auto;
 }
 
-.edit-btn,
-.delete-btn {
-    padding: 8px 10px;
-    border-radius: 8px;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    color: #dbeafe;
-}
-
-.edit-btn:hover,
-.delete-btn:hover {
-    background: rgba(255, 255, 255, 0.02);
-}
-
-/* Estilos para ícones da barra */
-.icon-bar-item {
-    width: 42px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: transparent;
-    cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    transition: all .12s ease;
-}
-
-.icon-bar-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(2, 6, 23, 0.5);
-}
-
-.icon-bar-item .bi {
-    font-size: 18px;
-    color: #dbeafe;
-    width: 18px;
-    height: 18px;
-    display: inline-block;
-    line-height: 18px;
-    text-align: center;
-}
-
-/* Estilo para label do checkbox */
 .checkbox-label {
     margin-top: 6px !important;
     display: flex !important;
