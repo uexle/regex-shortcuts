@@ -21,89 +21,132 @@ function saveShortcuts(shortcuts) {
   });
 }
 
+function createShortcutItem(shortcut, index, currentUrl) {
+  const template = el('shortcut-item-template');
+  const clone = template.content.cloneNode(true);
+  
+  const iconElement = clone.querySelector('.shortcut-icon');
+  const nameElement = clone.querySelector('.shortcut-name');
+  const applyButton = clone.querySelector('[data-action="apply"]');
+  const editButton = clone.querySelector('[data-action="edit"]');
+  const deleteButton = clone.querySelector('[data-action="delete"]');
+  const actionsContainer = clone.querySelector('.shortcut-actions');
+
+  // Configurar ícone e nome
+  const iconName = shortcut.icon ? `bi-${shortcut.icon}` : 'bi-link-45deg';
+  iconElement.className = `bi ${iconName}`;
+  nameElement.textContent = shortcut.name || `Shortcut ${index + 1}`;
+  applyButton.title = shortcut.name || `Shortcut ${index + 1}`;
+
+  // Adicionar event listeners
+  applyButton.addEventListener('click', () => applyShortcut(shortcut, currentUrl));
+  editButton.addEventListener('click', () => fillFormForEdit(shortcut, index));
+  deleteButton.addEventListener('click', () => deleteShortcut(index));
+
+  // Ocultar ações se não estiver em modo de edição
+  if (!isEditMode) {
+    actionsContainer.classList.add('hidden');
+  }
+
+  return clone;
+}
+
+function createIconBarItem(shortcut, index) {
+  const template = el('icon-bar-item-template');
+  const clone = template.content.cloneNode(true);
+  
+  const item = clone.querySelector('.icon-bar-item');
+  const iconElement = clone.querySelector('.bi');
+  
+  const iconName = shortcut.icon ? `bi-${shortcut.icon}` : 'bi-link-45deg';
+  iconElement.className = `bi ${iconName}`;
+  item.title = shortcut.name || '';
+  
+  item.addEventListener('click', async () => {
+    const currentUrl = await getCurrentTabUrl();
+    applyShortcut(shortcut, currentUrl);
+  });
+
+  return clone;
+}
+
+function createEditButton() {
+  const template = el('edit-button-template');
+  const clone = template.content.cloneNode(true);
+  
+  const editButton = clone.querySelector('[data-action="toggle-edit"]');
+  editButton.addEventListener('click', () => toggleEditMode(true));
+  
+  return clone;
+}
+
 function renderShortcuts(shortcuts, currentUrl) {
   const container = el('shortcuts-list');
   container.innerHTML = '';
-  shortcuts.forEach((s, idx) => {
-    const div = document.createElement('div');
-    div.className = 'shortcut';
-
-    const iconWrap = document.createElement('div');
-    iconWrap.className = 'icon-wrap';
-    const btn = document.createElement('button');
-    btn.className = 'icon-btn';
-    btn.title = s.name || `Shortcut ${idx+1}`;
-    const iconName = s.icon ? `bi-${s.icon}` : 'bi-link-45deg';
-    const i = document.createElement('i');
-    i.className = `bi ${iconName}`;
-    btn.appendChild(i);
-    btn.addEventListener('click', () => applyShortcut(s, currentUrl));
-    iconWrap.appendChild(btn);
-
-    const nameEl = document.createElement('div');
-    nameEl.className = 'name';
-    nameEl.textContent = s.name || `Shortcut ${idx+1}`;
-
-    const actions = document.createElement('div');
-    actions.className = 'actions';
-
-    const edit = document.createElement('button');
-    edit.textContent = 'Editar';
-    edit.addEventListener('click', () => fillFormForEdit(s, idx));
-
-    const del = document.createElement('button');
-    del.textContent = 'Excluir';
-    del.addEventListener('click', async () => {
-      if (!confirm('Deseja realmente excluir este atalho?')) return;
-      shortcuts.splice(idx, 1);
-      await saveShortcuts(shortcuts);
-      init();
-    });
-
-    actions.appendChild(edit);
-    actions.appendChild(del);
-
-    // if not edit mode, hide actions
-    if (!isEditMode) actions.style.display = 'none';
-
-    div.appendChild(iconWrap);
-    div.appendChild(nameEl);
-    div.appendChild(actions);
-    container.appendChild(div);
+  
+  shortcuts.forEach((shortcut, index) => {
+    const shortcutElement = createShortcutItem(shortcut, index, currentUrl);
+    container.appendChild(shortcutElement);
   });
 }
 
-function fillFormForEdit(s, idx) {
-  el('name').value = s.name || '';
-  el('icon').value = s.icon || '';
-  el('pattern').value = s.pattern || '';
-  el('target').value = s.target || '';
-  el('open-new-tab').checked = !!s.openNewTab;
-  el('add-form').dataset.editIndex = idx;
+function renderIconBar(shortcuts) {
+  const bar = el('icon-bar');
+  bar.innerHTML = '';
+  
+  // Adicionar ícones dos atalhos
+  shortcuts.forEach((shortcut, index) => {
+    const iconBarItem = createIconBarItem(shortcut, index);
+    bar.appendChild(iconBarItem);
+  });
+
+  // Adicionar botão de edição
+  const editButton = createEditButton();
+  bar.appendChild(editButton);
 }
 
-async function applyShortcut(s, currentUrl) {
+function fillFormForEdit(shortcut, index) {
+  el('name').value = shortcut.name || '';
+  el('icon').value = shortcut.icon || '';
+  el('pattern').value = shortcut.pattern || '';
+  el('target').value = shortcut.target || '';
+  el('open-new-tab').checked = !!shortcut.openNewTab;
+  el('add-form').dataset.editIndex = index;
+}
+
+async function deleteShortcut(index) {
+  if (!confirm('Deseja realmente excluir este atalho?')) return;
+  
+  const shortcuts = await loadShortcuts();
+  shortcuts.splice(index, 1);
+  await saveShortcuts(shortcuts);
+  init();
+}
+
+async function applyShortcut(shortcut, currentUrl) {
   try {
-    const re = new RegExp(s.pattern);
-    const m = currentUrl.match(re);
-    if (!m) {
+    const re = new RegExp(shortcut.pattern);
+    const match = currentUrl.match(re);
+    if (!match) {
       showMessage('A regex não combina com a URL atual.', 'error');
       return;
     }
-    // replace $1, $2 with group values
-    let dest = s.target;
-    for (let i = 1; i < m.length; i++) {
-      dest = dest.replace(new RegExp('\\$' + i, 'g'), m[i]);
+    
+    // Substituir $1, $2 com valores dos grupos
+    let destination = shortcut.target;
+    for (let i = 1; i < match.length; i++) {
+      destination = destination.replace(new RegExp('\\$' + i, 'g'), match[i]);
     }
-    // open in new tab or current tab depending on setting
-    if (s.openNewTab) {
-      chrome.tabs.create({ url: dest });
+    
+    // Abrir em nova aba ou aba atual dependendo da configuração
+    if (shortcut.openNewTab) {
+      chrome.tabs.create({ url: destination });
     } else {
       const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
       if (tabs && tabs[0]) {
-        chrome.tabs.update(tabs[0].id, { url: dest });
+        chrome.tabs.update(tabs[0].id, { url: destination });
       } else {
-        chrome.tabs.create({ url: dest });
+        chrome.tabs.create({ url: destination });
       }
     }
   } catch (err) {
@@ -112,16 +155,43 @@ async function applyShortcut(s, currentUrl) {
 }
 
 function showMessage(text, type = 'info') {
-  const m = el('message');
-  const mt = el('message-text');
-  if (!m) return;
-  m.classList.add('visible');
-  if (mt) mt.innerHTML = text;
-  if (type === 'error') m.style.background = 'rgba(255,60,60,0.06)';
-  else m.style.background = 'rgba(255,255,255,0.02)';
-  // auto-hide after 5s
-  clearTimeout(showMessage._t);
-  showMessage._t = setTimeout(() => { m.classList.remove('visible'); }, 5000);
+  const messageElement = el('message');
+  const messageText = el('message-text');
+  
+  if (!messageElement) return;
+  
+  messageElement.classList.add('visible');
+  if (messageText) messageText.innerHTML = text;
+  
+  if (type === 'error') {
+    messageElement.style.background = 'rgba(255,60,60,0.06)';
+  } else {
+    messageElement.style.background = 'rgba(255,255,255,0.02)';
+  }
+  
+  // Auto-ocultar após 5s
+  clearTimeout(showMessage._timeout);
+  showMessage._timeout = setTimeout(() => {
+    messageElement.classList.remove('visible');
+  }, 5000);
+}
+
+async function toggleEditMode(enable) {
+  isEditMode = !!enable;
+  const editArea = el('edit-area');
+  const iconBar = el('icon-bar');
+  
+  if (isEditMode) {
+    editArea.classList.remove('hidden');
+    iconBar.classList.add('hidden');
+  } else {
+    editArea.classList.add('hidden');
+    iconBar.classList.remove('hidden');
+  }
+  
+  const shortcuts = await loadShortcuts();
+  const currentUrl = await getCurrentTabUrl();
+  renderShortcuts(shortcuts, currentUrl);
 }
 
 async function init() {
@@ -133,85 +203,57 @@ async function init() {
   renderIconBar(shortcuts);
 }
 
-function renderIconBar(shortcuts) {
-  const bar = el('icon-bar');
-  bar.innerHTML = '';
-  // create icon buttons
-  shortcuts.forEach((s, idx) => {
-    const b = document.createElement('div');
-    b.className = 'icon-btn';
-    b.title = s.name || '';
-    const iconName = s.icon ? `bi-${s.icon}` : 'bi-link-45deg';
-    const i = document.createElement('i');
-    i.className = `bi ${iconName}`;
-    b.appendChild(i);
-  // no label in icon bar buttons (compact)
-    b.addEventListener('click', async () => {
-      const currentUrl = await getCurrentTabUrl();
-      applyShortcut(s, currentUrl);
+function setupEventListeners() {
+  // Fechar área de edição
+  const closeEditButton = el('close-edit');
+  if (closeEditButton) {
+    closeEditButton.addEventListener('click', () => toggleEditMode(false));
+  }
+
+  // Fechar mensagem
+  const messageCloseButton = el('message-close');
+  if (messageCloseButton) {
+    messageCloseButton.addEventListener('click', () => {
+      const messageElement = el('message');
+      if (messageElement) messageElement.classList.remove('visible');
+      clearTimeout(showMessage._timeout);
     });
-    bar.appendChild(b);
-  });
+  }
 
-  // edit pencil button
-  const editBtn = document.createElement('div');
-  editBtn.className = 'icon-btn';
-  // highlight this button differently
-  editBtn.classList.add('edit-action');
-  editBtn.title = 'Editar atalhos';
-  const pi = document.createElement('i');
-  pi.className = 'bi bi-pencil';
-  editBtn.appendChild(pi);
-  // compact edit button (no text label)
-  editBtn.addEventListener('click', () => toggleEditMode(true));
-  bar.appendChild(editBtn);
-}
+  // Formulário de adicionar/editar
+  const addForm = el('add-form');
+  if (addForm) {
+    addForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      
+      const name = el('name').value.trim();
+      const pattern = el('pattern').value.trim();
+      const target = el('target').value.trim();
+      
+      if (!name || !pattern || !target) return;
 
-async function toggleEditMode(on) {
-  isEditMode = !!on;
-  el('edit-area').style.display = isEditMode ? 'block' : 'none';
-  // hide icon-bar when editing
-  el('icon-bar').style.display = isEditMode ? 'none' : 'flex';
-  const shortcuts = await loadShortcuts();
-  const currentUrl = await getCurrentTabUrl();
-  renderShortcuts(shortcuts, currentUrl);
+      const shortcuts = await loadShortcuts();
+      const editIndex = addForm.dataset.editIndex;
+      const icon = el('icon').value.trim();
+      const openNewTab = !!el('open-new-tab').checked;
+      
+      const shortcutItem = { name, icon, pattern, target, openNewTab };
+      
+      if (editIndex !== undefined) {
+        shortcuts[Number(editIndex)] = shortcutItem;
+        delete addForm.dataset.editIndex;
+      } else {
+        shortcuts.push(shortcutItem);
+      }
+      
+      await saveShortcuts(shortcuts);
+      addForm.reset();
+      await init();
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   await init();
-
-  // close edit handler
-  const close = el('close-edit');
-  if (close) close.addEventListener('click', () => toggleEditMode(false));
-
-  const mClose = el('message-close');
-  if (mClose) mClose.addEventListener('click', () => {
-    const m = el('message');
-    if (m) m.classList.remove('visible');
-    clearTimeout(showMessage._t);
-  });
-
-  el('add-form').addEventListener('submit', async (ev) => {
-    ev.preventDefault();
-    const name = el('name').value.trim();
-    const pattern = el('pattern').value.trim();
-    const target = el('target').value.trim();
-    if (!name || !pattern || !target) return;
-
-    const shortcuts = await loadShortcuts();
-    const editIndex = el('add-form').dataset.editIndex;
-    const icon = el('icon').value.trim();
-    const openNewTab = !!el('open-new-tab').checked;
-    const item = { name, icon, pattern, target };
-    item.openNewTab = openNewTab;
-    if (editIndex !== undefined) {
-      shortcuts[Number(editIndex)] = item;
-      delete el('add-form').dataset.editIndex;
-    } else {
-      shortcuts.push(item);
-    }
-    await saveShortcuts(shortcuts);
-    el('add-form').reset();
-    await init();
-  });
+  setupEventListeners();
 });

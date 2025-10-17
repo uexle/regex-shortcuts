@@ -1,0 +1,431 @@
+:root {
+    --bg: #0f1720;
+    /* dark */
+    --panel: #0b1220;
+    --muted: #9aa4b2;
+    --accent: #1f6feb;
+    --card: #111827;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    /* external popup rounded corners */
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+body {
+    font-family: Inter, Arial, sans-serif;
+    width: 420px;
+    padding: 16px;
+    background: var(--bg);
+    color: #e6eef8;
+}
+
+h1 {
+    font-size: 18px;
+    margin: 0 0 10px;
+    color: #fff;
+}
+
+.panel {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    font-weight: 600;
+    color: var(--muted);
+}
+
+input[type=text],
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: #dfeafe;
+    border-radius: 10px;
+}
+
+input::placeholder {
+    color: #7d8894;
+}
+
+button {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.shortcut {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.shortcut button {
+    flex: 0 0 auto;
+}
+
+.shortcut .pattern {
+    flex: 1 1 auto;
+    word-break: break-all;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.icon-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 14px 0;
+    flex-wrap: wrap;
+}
+
+/* circular icon buttons with visible borders and consistent icon size */
+.icon-btn {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all .12s ease;
+}
+
+.icon-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(2, 6, 23, 0.5);
+}
+
+.icon-btn .bi {
+    font-size: 18px;
+    color: #dbeafe;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    line-height: 18px;
+    text-align: center;
+}
+
+/* hide labels on icon bar (no names on buttons) */
+.icon-label {
+    display: none;
+}
+
+.small {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.03);
+    margin: 10px 0;
+}
+
+/* edit area styles */
+#edit-area {
+    margin-top: 10px;
+}
+
+.edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.round-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    color: #dbeafe;
+}
+
+.round-btn:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* edit list row */
+.shortcut {
+    align-items: center;
+}
+
+.shortcut .icon-wrap {
+    flex: 0 0 42px;
+}
+
+.shortcut .name {
+    font-size: 14px;
+    color: #e6eef8;
+    margin-left: 10px;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+}
+
+.actions button {
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    color: #dbeafe;
+}
+
+.actions button:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* form spacing */
+#add-form input {
+    margin-top: 8px;
+    margin-bottom: 12px;
+}
+
+#add-form button {
+    width: 100%;
+    display: block;
+    margin-top: 16px;
+}
+
+.icon-help {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+/* highlighted style for the last action button (edit pencil) */
+.icon-btn.edit-action {
+    border-color: #22c55e;
+    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.12);
+}
+
+.icon-btn.edit-action .bi {
+    color: #22c55e;
+}
+
+.message-card {
+    /* hidden by default; visibility controlled by .visible */
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin: 10px 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    color: #ffd7b5;
+    display: none;
+}
+
+.message-card.visible {
+    display: flex;
+}
+
+.message-card #message-text {
+    flex: 1;
+    padding-right: 8px;
+    width: auto;
+    word-break: break-word;
+}
+
+.message-card #message-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: #ffd7b5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    /* override global button margin */
+    align-self: center;
+}
+
+.icon-input-wrap {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* o input ocupa todo o espaço disponível e combina visualmente com o botão */
+.icon-input-wrap input {
+    flex: 1 1 auto;
+    min-width: 0;
+    /* evita overflow em flex containers */
+    box-sizing: border-box;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: #dfeafe;
+    border-radius: 10px 0 0 10px;
+    /* arredondamento à esquerda, "colado" ao botão à direita */
+    height: 44px;
+    /* garante mesma altura do botão */
+}
+
+/* link estilizado como um botão à direita do input, mesmo tamanho e borda combinando */
+.icon-help-link {
+    margin-top: 8px;
+    margin-bottom: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-left: none;
+    /* evita borda dupla entre input e botão */
+    border-radius: 0 10px 10px 0;
+    /* arredondamento à direita */
+    color: var(--muted);
+    font-size: 14px;
+    text-decoration: none;
+    transition: all .12s ease;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.icon-help-link:hover,
+.icon-help-link:focus {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.04);
+    color: #fff;
+    outline: none;
+}
+
+/* icone interno com tamanho adequado */
+.icon-help-link .bi {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    color: inherit;
+}
+
+/* foco no input mantém a aparência integrada */
+.icon-input-wrap input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 6px 18px rgba(2, 6, 23, 0.08);
+}
+
+/* Estilos para ocultar/exibir elementos */
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: flex !important;
+}
+
+/* Estilos para elementos de atalho dinâmicos */
+.shortcut-item {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.shortcut-icon-wrap {
+    flex: 0 0 42px;
+}
+
+.shortcut-name {
+    font-size: 14px;
+    color: #e6eef8;
+    margin-left: 10px;
+}
+
+.shortcut-actions {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    color: #dbeafe;
+}
+
+.edit-btn:hover,
+.delete-btn:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Estilos para ícones da barra */
+.icon-bar-item {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all .12s ease;
+}
+
+.icon-bar-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(2, 6, 23, 0.5);
+}
+
+.icon-bar-item .bi {
+    font-size: 18px;
+    color: #dbeafe;
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    line-height: 18px;
+    text-align: center;
+}
+
+/* Estilo para label do checkbox */
+.checkbox-label {
+    margin-top: 6px !important;
+    display: flex !important;
+    align-items: center;
+    gap: 8px;
+}
