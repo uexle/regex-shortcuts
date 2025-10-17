@@ -41,12 +41,22 @@ body {
 
 body {
     font-family: Inter, Arial, sans-serif;
-    min-width: 280px;
-    max-width: 460px;
-    width: fit-content;
+    width: auto;
+    min-width: min-content;
+    max-width: none;
     padding: 16px;
     background: var(--bg);
     color: var(--text-primary);
+}
+
+/* Layout responsivo para o popup principal */
+body {
+    width: fit-content;
+}
+
+/* Layout para modo de edição */
+body.edit-mode {
+    width: 420px;
 }
 
 h1 {
@@ -121,8 +131,8 @@ button {
     display: flex;
     gap: 12px;
     align-items: center;
-    flex-wrap: wrap;
-    justify-content: flex-start;
+    flex-wrap: nowrap;
+    justify-content: center;
     width: fit-content;
 }
 
