@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Regex Shortcuts</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --bg: #0f1720;
+      /* dark */
+      --panel: #0b1220;
+      --muted: #9aa4b2;
+      --accent: #1f6feb;
+      --card: #111827;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0
+    }
+
+    /* external popup rounded corners */
+    html,
+    body {
+      border-radius: 14px;
+      overflow: hidden
+    }
+
+    body {
+      font-family: Inter, Arial, sans-serif;
+      width: 340px;
+      padding: 16px;
+      background: var(--bg);
+      color: #e6eef8
+    }
+
+    h1 {
+      font-size: 18px;
+      margin: 0 0 10px;
+      color: #fff
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.04)
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+      color: var(--muted)
+    }
+
+    input[type=text],
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: #dfeafe;
+      border-radius: 10px
+    }
+
+    input::placeholder {
+      color: #7d8894
+    }
+
+    button {
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      cursor: pointer
+    }
+
+    .shortcut {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02)
+    }
+
+    .shortcut button {
+      flex: 0 0 auto
+    }
+
+    .shortcut .pattern {
+      flex: 1 1 auto;
+      word-break: break-all;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .icon-bar {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin: 14px 0
+    }
+
+    /* circular icon buttons with visible borders and consistent icon size */
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all .12s ease
+    }
+
+    .icon-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(2, 6, 23, 0.5)
+    }
+
+    .icon-btn .bi {
+      font-size: 18px;
+      color: #dbeafe;
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      line-height: 18px;
+      text-align: center
+    }
+
+    /* hide labels on icon bar (no names on buttons) */
+    .icon-label {
+      display: none
+    }
+
+    .small {
+      font-size: 12px;
+      color: var(--muted)
+    }
+
+    hr {
+      border: 0;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.03);
+      margin: 10px 0
+    }
+
+    /* edit area styles */
+    #edit-area {
+      margin-top: 10px
+    }
+
+    .edit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px
+    }
+
+    .round-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      color: #dbeafe
+    }
+
+    .round-btn:hover {
+      background: rgba(255, 255, 255, 0.02)
+    }
+
+    /* edit list row */
+    .shortcut {
+      align-items: center
+    }
+
+    .shortcut .icon-wrap {
+      flex: 0 0 44px
+    }
+
+    .shortcut .name {
+      font-size: 14px;
+      color: #e6eef8;
+      margin-left: 10px
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-left: auto
+    }
+
+    .actions button {
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      color: #dbeafe
+    }
+
+    .actions button:hover {
+      background: rgba(255, 255, 255, 0.02)
+    }
+
+    /* form spacing */
+    #add-form input {
+      margin-top: 8px;
+      margin-bottom: 12px
+    }
+
+    #add-form button {
+      width: 100%;
+      display: block
+    }
+
+    .icon-help {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px
+    }
+
+    /* highlighted style for the last action button (edit pencil) */
+    .icon-btn.edit-action {
+      border-color: #ffb86b;
+      box-shadow: 0 2px 8px rgba(255, 184, 107, 0.12)
+    }
+
+    .icon-btn.edit-action .bi {
+      color: #ffb86b
+    }
+
+    .message-card {
+      /* hidden by default; visibility controlled by .visible */
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 10px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      color: #ffd7b5;
+      display: none;
+    }
+
+    .message-card.visible {
+      display: flex
+    }
+
+    .message-card #message-text {
+      flex: 1;
+      padding-right: 8px;
+      width: auto;
+      word-break: break-word;
+    }
+
+    .message-card #message-close {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: #ffd7b5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      /* override global button margin */
+      align-self: center;
+    }
+
+    /* icon input helper (small arrow inside input line) */
+    .icon-input-wrap {
+      position: relative;
+      display: block
+    }
+
+    .icon-input-wrap input {
+      padding-right: 48px
+    }
+
+    .icon-help-link {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 14px;
+      text-decoration: none;
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      transition: all .12s ease;
+      z-index: 3;
+      background: transparent
+    }
+
+    .icon-help-link:hover {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.04);
+      color: #fff
+    }
+
+    .icon-help-link .bi {
+      font-size: 16px
+    }
+  </style>
+</head>
+
+<body>
+  <div id="message" class="message-card">
+    <div id="message-text"></div>
+    <button id="message-close" class="round-btn" title="Fechar mensagem"><i class="bi bi-x-lg"></i></button>
+  </div>
+  <div id="icon-bar" class="icon-bar">carregando...</div>
+
+  <div id="edit-area" style="display:none" class="panel">
+    <div class="edit-header">
+      <div class="small">URL atual: <span id="current-url">carregando...</span></div>
+      <button id="close-edit" class="round-btn" title="Fechar edição"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div id="shortcuts-list"></div>
+
+    <hr />
+    <form id="add-form">
+      <label for="name">Nome do atalho</label>
+      <input id="name" type="text" required />
+
+      <label for="icon">Ícone (nome do Bootstrap Icon, ex: 'gear', 'eye')</label>
+      <div class="icon-input-wrap">
+        <input id="icon" type="text" placeholder="ex: gear" />
+        <a class="icon-help-link" href="https://icons.getbootstrap.com/" target="_blank" rel="noopener noreferrer"
+          title="Abrir catálogo de ícones"><i class="bi bi-box-arrow-up-right"></i></a>
+      </div>
+
+      <label for="pattern">Regex (para capturar grupos)</label>
+      <input id="pattern" type="text" placeholder="ex: https://example.com/model/(\\d+)/inspect" required />
+
+      <label for="target">Destino (use $1, $2 para grupos)</label>
+      <input id="target" type="text" placeholder="ex: https://example.com/admin/model/$1" required />
+
+      <label style="margin-top:6px; display:flex; align-items:center; gap:8px"><input id="open-new-tab"
+          type="checkbox" /> Abrir em nova aba</label>
+
+      <button type="submit">Adicionar / Atualizar</button>
+    </form>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
