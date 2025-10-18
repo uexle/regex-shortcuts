@@ -11,6 +11,9 @@ class EditArea {
     this.listContainer = getElement('shortcuts-list');
     this.currentUrlElement = getElement('current-url');
     this.closeButton = getElement('close-edit');
+    this.importButton = getElement('import-shortcuts');
+    this.exportButton = getElement('export-shortcuts');
+    this.importFileInput = getElement('import-file-input');
     
     this.shortcuts = [];
     this.shortcutItems = []; // Armazenar referências dos itens
@@ -27,6 +30,29 @@ class EditArea {
     if (this.closeButton) {
       this.closeButton.addEventListener('click', () => {
         if (this.onCloseCallback) this.onCloseCallback();
+      });
+    }
+
+    // Import/export button handlers
+    if (this.exportButton) {
+      this.exportButton.addEventListener('click', () => {
+        if (this.onExport) this.onExport();
+      });
+    }
+
+    if (this.importButton && this.importFileInput) {
+      this.importButton.addEventListener('click', () => {
+        // Trigger hidden file input
+        this.importFileInput.value = null;
+        this.importFileInput.click();
+      });
+
+      this.importFileInput.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        const text = await file.text();
+        if (this.onImport) this.onImport(text);
       });
     }
   }

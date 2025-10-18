@@ -9,7 +9,7 @@
 
   <!-- External Dependencies -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-  
+
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -36,16 +36,24 @@
        EDIT AREA (Edit Mode)
        ==================== -->
   <section id="edit-area" class="panel hidden" aria-labelledby="edit-area-title">
-    
+
     <!-- Header with current URL -->
     <header class="edit-header">
       <div class="small">
-        <span id="edit-area-title">URL atual:</span>
         <span id="current-url" aria-label="URL da página atual">carregando...</span>
       </div>
+      <button id="import-shortcuts" class="round-btn" type="button" aria-label="Importar atalhos"
+        title="Importar atalhos">
+        <i class="bi bi-upload" aria-hidden="true"></i>
+      </button>
+      <button id="export-shortcuts" class="round-btn" type="button" aria-label="Exportar atalhos"
+        title="Exportar atalhos">
+        <i class="bi bi-download" aria-hidden="true"></i>
+      </button>
       <button id="close-edit" class="round-btn" type="button" aria-label="Fechar edição" title="Fechar edição">
         <i class="bi bi-x-lg" aria-hidden="true"></i>
       </button>
+      <input type="file" id="import-file-input" accept=".json" style="display: none;">
     </header>
 
     <!-- Shortcuts List -->
@@ -57,36 +65,20 @@
 
     <!-- Add/Edit Shortcut Form -->
     <form id="add-form" aria-label="Formulário de atalho">
-      
+
       <!-- Shortcut Name -->
       <div class="form-group">
         <label for="name">Nome do atalho</label>
-        <input 
-          id="name" 
-          type="text" 
-          autocomplete="off" 
-          required 
-          aria-required="true"
-          placeholder="ex: Painel Admin">
+        <input id="name" type="text" autocomplete="off" required aria-required="true" placeholder="ex: Painel Admin">
       </div>
 
       <!-- Icon Selection -->
       <div class="form-group">
         <label for="icon">Ícone do atalho</label>
         <div class="icon-input-wrap">
-          <input 
-            id="icon" 
-            type="text" 
-            placeholder="ex: gear" 
-            autocomplete="off" 
-            aria-describedby="icon-help">
-          <a 
-            class="icon-help-link" 
-            href="https://icons.getbootstrap.com/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            aria-label="Abrir catálogo de ícones em nova aba"
-            title="Abrir catálogo de ícones">
+          <input id="icon" type="text" placeholder="ex: gear" autocomplete="off" aria-describedby="icon-help">
+          <a class="icon-help-link" href="https://icons.getbootstrap.com/" target="_blank" rel="noopener noreferrer"
+            aria-label="Abrir catálogo de ícones em nova aba" title="Abrir catálogo de ícones">
             <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
           </a>
         </div>
@@ -98,14 +90,8 @@
       <!-- Regex Pattern -->
       <div class="form-group">
         <label for="pattern">Regex de captura</label>
-        <input 
-          id="pattern" 
-          type="text" 
-          placeholder="ex: https://example.com/model/(\d+)" 
-          autocomplete="off"
-          required 
-          aria-required="true"
-          aria-describedby="pattern-help">
+        <input id="pattern" type="text" placeholder="ex: https://example.com/model/(\d+)" autocomplete="off" required
+          aria-required="true" aria-describedby="pattern-help">
         <small id="pattern-help" class="form-hint">
           Use parênteses () para capturar grupos na URL
         </small>
@@ -114,14 +100,8 @@
       <!-- Target URL -->
       <div class="form-group">
         <label for="target">Destino</label>
-        <input 
-          id="target" 
-          type="text" 
-          placeholder="ex: https://example.com/admin/model/$1" 
-          autocomplete="off"
-          required 
-          aria-required="true"
-          aria-describedby="target-help">
+        <input id="target" type="text" placeholder="ex: https://example.com/admin/model/$1" autocomplete="off" required
+          aria-required="true" aria-describedby="target-help">
         <small id="target-help" class="form-hint">
           Substitua os grupos capturados usando $1, $2, etc.
         </small>
@@ -130,10 +110,7 @@
       <!-- Open in New Tab Option -->
       <div class="form-group">
         <label class="checkbox-label">
-          <input 
-            id="open-new-tab" 
-            type="checkbox" 
-            aria-label="Abrir atalho em nova guia">
+          <input id="open-new-tab" type="checkbox" aria-label="Abrir atalho em nova guia">
           Abrir em nova guia
         </label>
       </div>
@@ -147,16 +124,12 @@
   <!-- ====================
        TEMPLATES
        ==================== -->
-  
+
   <!-- Shortcut Item Template (for edit list) -->
   <template id="shortcut-item-template">
     <div class="shortcut-item" role="listitem">
       <div class="shortcut-icon-wrap">
-        <button 
-          class="icon-btn shortcut-btn" 
-          type="button" 
-          data-action="apply" 
-          aria-label="Aplicar atalho">
+        <button class="icon-btn shortcut-btn" type="button" data-action="apply" aria-label="Aplicar atalho">
           <i class="bi shortcut-icon" aria-hidden="true"></i>
         </button>
       </div>
@@ -170,21 +143,14 @@
 
   <!-- Icon Bar Item Template -->
   <template id="icon-bar-item-template">
-    <button 
-      class="icon-bar-item" 
-      type="button" 
-      data-action="apply-shortcut">
+    <button class="icon-bar-item" type="button" data-action="apply-shortcut">
       <i class="bi" aria-hidden="true"></i>
     </button>
   </template>
 
   <!-- Edit Button Template -->
   <template id="edit-button-template">
-    <button 
-      class="icon-btn edit-action" 
-      type="button" 
-      data-action="toggle-edit" 
-      title="Configurar atalhos" 
+    <button class="icon-btn edit-action" type="button" data-action="toggle-edit" title="Configurar atalhos"
       aria-label="Configurar atalhos">
       <i class="bi bi-gear" aria-hidden="true"></i>
     </button>

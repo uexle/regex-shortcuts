@@ -52,6 +52,43 @@ class UIManager {
     this.editForm.onSubmit(async (data, index) => {
       await this.handleFormSubmit(data, index);
     });
+
+    // Import/Export handlers
+    this.editArea.onExport = async () => {
+      try {
+        const json = await shortcutService.exportShortcuts();
+        // Criar blob e forçar download
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'shortcuts.json';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        this.message.success('Arquivo exportado com sucesso.');
+      } catch (err) {
+        this.message.error('Erro ao exportar: ' + err.message);
+      }
+    };
+
+    this.editArea.onImport = async (jsonText) => {
+      try {
+        const result = await shortcutService.importShortcuts(jsonText);
+        if (!result.success) {
+          this.message.error(result.error || 'Erro ao importar arquivo.');
+          return;
+        }
+
+        // Recarregar atalhos e re-renderizar
+        await this.loadShortcuts();
+        this.renderEditMode();
+        this.message.success('Atalhos importados com sucesso.');
+      } catch (err) {
+        this.message.error('Erro ao importar: ' + err.message);
+      }
+    };
   }
 
   /**

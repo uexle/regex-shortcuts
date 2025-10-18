@@ -67,3 +67,51 @@ export const deleteShortcut = async (index) => {
   await saveShortcuts(shortcuts);
   return shortcuts;
 };
+
+/**
+ * Exporta atalhos como JSON
+ * @returns {Promise<string>} JSON com todos os atalhos
+ */
+export const exportShortcuts = async () => {
+  const shortcuts = await loadShortcuts();
+  return JSON.stringify(shortcuts, null, 2);
+};
+
+/**
+ * Importa atalhos de JSON
+ * @param {string} jsonData - String JSON contendo os atalhos
+ * @returns {Promise<{success: boolean, shortcuts?: Array, error?: string}>}
+ */
+export const importShortcuts = async (jsonData) => {
+  try {
+    const shortcuts = JSON.parse(jsonData);
+    
+    // Validar se é um array
+    if (!Array.isArray(shortcuts)) {
+      return { 
+        success: false, 
+        error: 'O arquivo deve conter um array de atalhos.' 
+      };
+    }
+    
+    // Validar estrutura básica dos atalhos
+    for (const shortcut of shortcuts) {
+      if (!shortcut.name || !shortcut.pattern || !shortcut.target) {
+        return { 
+          success: false, 
+          error: 'Arquivo inválido: todos os atalhos devem ter name, pattern e target.' 
+        };
+      }
+    }
+    
+    // Salvar os atalhos importados
+    await saveShortcuts(shortcuts);
+    
+    return { success: true, shortcuts };
+  } catch (error) {
+    return { 
+      success: false, 
+      error: 'Erro ao processar arquivo: ' + error.message 
+    };
+  }
+};

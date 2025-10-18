@@ -125,3 +125,20 @@ export const removeShortcut = async (index) => {
 export const getAllShortcuts = async () => {
   return await storage.loadShortcuts();
 };
+
+/**
+ * Exporta todos os atalhos como JSON
+ * @returns {Promise<string>} JSON com todos os atalhos
+ */
+export const exportShortcuts = async () => {
+  return await storage.exportShortcuts();
+};
+
+/**
+ * Importa atalhos de JSON
+ * @param {string} jsonData - String JSON contendo os atalhos
+ * @returns {Promise<{success: boolean, shortcuts?: Array, error?: string}>}
+ */
+export const importShortcuts = async (jsonData) => {
+  return await storage.importShortcuts(jsonData);
+};

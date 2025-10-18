@@ -69,6 +69,26 @@ h1 {
     box-sizing: border-box;
 }
 
+.edit-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.round-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+}
+
 label {
     display: block;
     margin-top: 12px;
