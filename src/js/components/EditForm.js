@@ -12,6 +12,7 @@ class EditForm {
     this.patternInput = getElement('pattern');
     this.targetInput = getElement('target');
     this.openNewTabInput = getElement('open-new-tab');
+    this.autoExecuteInput = getElement('auto-execute');
     
     this.editIndex = null;
     this.onSubmitCallback = null;
@@ -61,7 +62,8 @@ class EditForm {
       icon: this.iconInput?.value.trim() || '',
       pattern: this.patternInput?.value.trim() || '',
       target: this.targetInput?.value.trim() || '',
-      openNewTab: this.openNewTabInput?.checked || false
+      openNewTab: this.openNewTabInput?.checked || false,
+      autoExecute: this.autoExecuteInput?.checked || false
     };
   }
 
@@ -78,6 +80,7 @@ class EditForm {
     this.patternInput.value = shortcut.pattern || '';
     this.targetInput.value = shortcut.target || '';
     this.openNewTabInput.checked = !!shortcut.openNewTab;
+    this.autoExecuteInput.checked = !!shortcut.autoExecute;
     
     this.editIndex = index;
   }

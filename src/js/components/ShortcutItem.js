@@ -33,7 +33,8 @@ class ShortcutItem {
 
     // Selecionar elementos
     const iconElement = clone.querySelector('.shortcut-icon');
-    const nameElement = clone.querySelector('.shortcut-name');
+    const nameTextElement = clone.querySelector('.shortcut-name-text');
+    const autoExecuteBadge = clone.querySelector('.auto-execute-badge');
     const applyButton = clone.querySelector('[data-action="apply"]');
     const editButton = clone.querySelector('[data-action="edit"]');
     const deleteButton = clone.querySelector('[data-action="delete"]');
@@ -46,8 +47,15 @@ class ShortcutItem {
 
     // Configurar nome
     const displayName = this.shortcut.name || `Shortcut ${this.index + 1}`;
-    nameElement.textContent = displayName;
+    if (nameTextElement) {
+      nameTextElement.textContent = displayName;
+    }
     applyButton.title = displayName;
+
+    // Mostrar ou esconder badge de auto-execução
+    if (this.shortcut.autoExecute && autoExecuteBadge) {
+      autoExecuteBadge.classList.remove('hidden');
+    }
 
     // Armazenar referência do botão para poder marcar erros
     this.applyButton = applyButton;
