@@ -2,8 +2,6 @@
 
 Extensão Chrome para criar atalhos personalizados baseados em expressões regulares (regex) para navegação rápida entre páginas web.
 
-> 💻 **Desenvolvedor?** Veja [CONTRIBUTING.md](CONTRIBUTING.md) para arquitetura e guia técnico completo.
-
 ## 🚀 Instalação
 
 1. Clone ou baixe este repositório
@@ -79,12 +77,6 @@ Converte links do YouTube para YouTube Music.
 - Feche e abra o popup novamente
 - Limpe o cache do navegador se necessário
 
-## 📝 Recursos Úteis
-
-- [Chrome Extension Docs](https://developer.chrome.com/docs/extensions/)
-- [Bootstrap Icons](https://icons.getbootstrap.com/) - Catálogo de ícones disponíveis
-- [Regex Tester](https://regex101.com/) - Teste suas regex antes de usar
-
 ## 🤝 Contribuindo
 
 Contribuições são bem-vindas! 
@@ -101,6 +93,3 @@ Contribuições são bem-vindas!
 
 MIT
 
----
-
-⭐ Se este projeto foi útil para você, considere dar uma estrela no GitHub!
