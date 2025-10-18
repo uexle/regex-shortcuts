@@ -88,8 +88,3 @@ Contribuições são bem-vindas!
 5. Abra um Pull Request
 
 📖 **Leia o [CONTRIBUTING.md](CONTRIBUTING.md)** para detalhes sobre a arquitetura, padrões de código e guias de desenvolvimento.
-
-## 📄 Licença
-
-MIT
-
