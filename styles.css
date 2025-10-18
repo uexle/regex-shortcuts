@@ -57,6 +57,7 @@ body {
 /* Layout para modo de edição */
 body.edit-mode {
     width: 420px;
+    max-width: 420px;
 }
 
 h1 {
@@ -192,6 +193,7 @@ hr {
     justify-content: space-between;
     align-items: center;
     gap: 8px;
+    min-width: 0; /* allow children to shrink */
 }
 
 .round-btn {
@@ -384,4 +386,54 @@ hr {
     display: flex !important;
     align-items: center;
     gap: 8px;
+}
+
+.edit-header .small {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 6px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+#current-url {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.edit-header .round-btn {
+    flex: 0 0 auto;
+}
+
+/* Form groups for better organization */
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    margin-top: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+}
+
+.form-group input[type="text"] {
+    width: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.form-hint {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
 }

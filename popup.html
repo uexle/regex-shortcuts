@@ -2,92 +2,198 @@
 <html lang="pt-BR">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Extensão para criar atalhos com regex para navegação rápida">
   <title>Regex Shortcuts</title>
+
+  <!-- External Dependencies -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  
+  <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-  <div id="message" class="message-card">
+  <!-- ====================
+       FEEDBACK MESSAGES
+       ==================== -->
+  <aside id="message" class="message-card" role="alert" aria-live="polite">
     <div id="message-text"></div>
-    <button id="message-close" class="round-btn" title="Fechar mensagem"><i class="bi bi-x-lg"></i></button>
-  </div>
-  
-  <div id="icon-bar" class="icon-bar">
-    <!-- Ícones de atalho serão inseridos aqui dinamicamente -->
-  </div>
+    <button id="message-close" class="round-btn" type="button" aria-label="Fechar mensagem" title="Fechar mensagem">
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </aside>
 
-  <div id="edit-area" class="panel hidden">
-    <div class="edit-header">
-      <div class="small">URL atual: <span id="current-url">carregando...</span></div>
-      <button id="close-edit" class="round-btn" title="Fechar edição"><i class="bi bi-x-lg"></i></button>
-    </div>
+  <!-- ====================
+       ICON BAR (Normal Mode)
+       ==================== -->
+  <nav id="icon-bar" class="icon-bar" aria-label="Atalhos de navegação">
+    <!-- Shortcut icons will be dynamically inserted here -->
+  </nav>
+
+  <!-- ====================
+       EDIT AREA (Edit Mode)
+       ==================== -->
+  <section id="edit-area" class="panel hidden" aria-labelledby="edit-area-title">
     
-    <div id="shortcuts-list">
-      <!-- Lista de atalhos será inserida aqui dinamicamente -->
+    <!-- Header with current URL -->
+    <header class="edit-header">
+      <div class="small">
+        <span id="edit-area-title">URL atual:</span>
+        <span id="current-url" aria-label="URL da página atual">carregando...</span>
+      </div>
+      <button id="close-edit" class="round-btn" type="button" aria-label="Fechar edição" title="Fechar edição">
+        <i class="bi bi-x-lg" aria-hidden="true"></i>
+      </button>
+    </header>
+
+    <!-- Shortcuts List -->
+    <div id="shortcuts-list" role="list" aria-label="Lista de atalhos configurados">
+      <!-- Shortcut items will be dynamically inserted here -->
     </div>
 
-    <hr />
-    
-    <form id="add-form">
-      <label for="name">Nome do atalho</label>
-      <input id="name" type="text" required />
+    <hr aria-hidden="true">
 
-      <label for="icon">Ícone (nome do Bootstrap Icon)</label>
-      <div class="icon-input-wrap">
-        <input id="icon" type="text" placeholder="ex: gear" />
-        <a class="icon-help-link" href="https://icons.getbootstrap.com/" target="_blank" rel="noopener noreferrer"
-          title="Abrir catálogo de ícones"><i class="bi bi-box-arrow-up-right"></i></a>
+    <!-- Add/Edit Shortcut Form -->
+    <form id="add-form" aria-label="Formulário de atalho">
+      
+      <!-- Shortcut Name -->
+      <div class="form-group">
+        <label for="name">Nome do atalho</label>
+        <input 
+          id="name" 
+          type="text" 
+          autocomplete="off" 
+          required 
+          aria-required="true"
+          placeholder="ex: Painel Admin">
       </div>
 
-      <label for="pattern">Regex (para capturar grupos)</label>
-      <input id="pattern" type="text" placeholder="ex: https://example.com/model/(\\d+)/inspect" required />
+      <!-- Icon Selection -->
+      <div class="form-group">
+        <label for="icon">Ícone do atalho</label>
+        <div class="icon-input-wrap">
+          <input 
+            id="icon" 
+            type="text" 
+            placeholder="ex: gear" 
+            autocomplete="off" 
+            aria-describedby="icon-help">
+          <a 
+            class="icon-help-link" 
+            href="https://icons.getbootstrap.com/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            aria-label="Abrir catálogo de ícones em nova aba"
+            title="Abrir catálogo de ícones">
+            <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+          </a>
+        </div>
+        <small id="icon-help" class="form-hint">
+          Opcional: escolha um ícone do catálogo Bootstrap Icons
+        </small>
+      </div>
 
-      <label for="target">Destino (use $1, $2 para grupos)</label>
-      <input id="target" type="text" placeholder="ex: https://example.com/admin/model/$1" required />
+      <!-- Regex Pattern -->
+      <div class="form-group">
+        <label for="pattern">Regex de captura</label>
+        <input 
+          id="pattern" 
+          type="text" 
+          placeholder="ex: https://example.com/model/(\d+)" 
+          autocomplete="off"
+          required 
+          aria-required="true"
+          aria-describedby="pattern-help">
+        <small id="pattern-help" class="form-hint">
+          Use parênteses () para capturar grupos na URL
+        </small>
+      </div>
 
-      <label class="checkbox-label">
-        <input id="open-new-tab" type="checkbox" /> 
-        Abrir em nova guia
-      </label>
+      <!-- Target URL -->
+      <div class="form-group">
+        <label for="target">Destino</label>
+        <input 
+          id="target" 
+          type="text" 
+          placeholder="ex: https://example.com/admin/model/$1" 
+          autocomplete="off"
+          required 
+          aria-required="true"
+          aria-describedby="target-help">
+        <small id="target-help" class="form-hint">
+          Substitua os grupos capturados usando $1, $2, etc.
+        </small>
+      </div>
 
-      <button type="submit">Adicionar / Atualizar</button>
+      <!-- Open in New Tab Option -->
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input 
+            id="open-new-tab" 
+            type="checkbox" 
+            aria-label="Abrir atalho em nova guia">
+          Abrir em nova guia
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit">Salvar</button>
     </form>
-  </div>
 
-  <!-- Template para item de atalho na lista de edição -->
+  </section>
+
+  <!-- ====================
+       TEMPLATES
+       ==================== -->
+  
+  <!-- Shortcut Item Template (for edit list) -->
   <template id="shortcut-item-template">
-    <div class="shortcut-item">
+    <div class="shortcut-item" role="listitem">
       <div class="shortcut-icon-wrap">
-        <button class="icon-btn shortcut-btn" data-action="apply">
-          <i class="bi shortcut-icon"></i>
+        <button 
+          class="icon-btn shortcut-btn" 
+          type="button" 
+          data-action="apply" 
+          aria-label="Aplicar atalho">
+          <i class="bi shortcut-icon" aria-hidden="true"></i>
         </button>
       </div>
       <div class="shortcut-name"></div>
       <div class="shortcut-actions">
-        <button class="edit-btn" data-action="edit">Editar</button>
-        <button class="delete-btn" data-action="delete">Excluir</button>
+        <button class="edit-btn" type="button" data-action="edit">Editar</button>
+        <button class="delete-btn" type="button" data-action="delete">Excluir</button>
       </div>
     </div>
   </template>
 
-  <!-- Template para ícone na barra de atalhos -->
+  <!-- Icon Bar Item Template -->
   <template id="icon-bar-item-template">
-    <div class="icon-bar-item" data-action="apply-shortcut">
-      <i class="bi"></i>
-    </div>
+    <button 
+      class="icon-bar-item" 
+      type="button" 
+      data-action="apply-shortcut">
+      <i class="bi" aria-hidden="true"></i>
+    </button>
   </template>
 
-  <!-- Template para botão de edição na barra de ícones -->
+  <!-- Edit Button Template -->
   <template id="edit-button-template">
-    <div class="icon-btn edit-action" data-action="toggle-edit" title="Configurar atalhos">
-      <i class="bi bi-gear"></i>
-    </div>
+    <button 
+      class="icon-btn edit-action" 
+      type="button" 
+      data-action="toggle-edit" 
+      title="Configurar atalhos" 
+      aria-label="Configurar atalhos">
+      <i class="bi bi-gear" aria-hidden="true"></i>
+    </button>
   </template>
 
-  <script src="popup.js"></script>
-</body>
+  <!-- ====================
+       SCRIPTS
+       ==================== -->
+  <script type="module" src="src/js/main.js"></script>
 
+</body>
 </html>
