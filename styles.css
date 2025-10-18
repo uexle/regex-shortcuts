@@ -5,37 +5,33 @@
     --accent: #1f6feb;
     --card: #111827;
     
-    /* Text colors */
     --text-primary: #e6eef8;
     --text-white: #fff;
     --text-input: #dfeafe;
     --text-placeholder: #7d8894;
     --text-message: #ffd7b5;
     
-    /* Border colors */
     --border-primary: rgba(255, 255, 255, 0.06);
     --border-secondary: rgba(255, 255, 255, 0.04);
     --border-divider: rgba(255, 255, 255, 0.03);
     
-    /* Background colors */
     --bg-overlay-light: rgba(255, 255, 255, 0.02);
     --bg-overlay-lighter: rgba(255, 255, 255, 0.01);
     --bg-panel-gradient: linear-gradient(180deg, var(--bg-overlay-light), var(--bg-overlay-lighter));
     
-    /* Shadow colors */
     --shadow-primary: rgba(2, 6, 23, 0.5);
     --shadow-accent: rgba(31, 111, 235, 0.08);
     --shadow-edit: rgba(31, 111, 235, 0.12);
     
-    /* Error colors */
     --error-bg: rgba(255, 60, 60, 0.06);
+    --error-border: #ff3c3c;
+    --error-shadow: rgba(255, 60, 60, 0.3);
 }
 
 html,
 body {
     margin: 0;
     padding: 0;
-    border-radius: 14px;
     overflow: hidden;
 }
 
@@ -49,12 +45,10 @@ body {
     color: var(--text-primary);
 }
 
-/* Layout responsivo para o popup principal */
 body {
     width: fit-content;
 }
 
-/* Layout para modo de edição */
 body.edit-mode {
     width: 420px;
     max-width: 420px;
@@ -157,6 +151,34 @@ button {
     box-shadow: 0 6px 18px var(--shadow-primary);
 }
 
+.icon-bar-item.error {
+    border-color: var(--error-border);
+    border-width: 2px;
+    box-shadow: 0 0 12px var(--error-shadow);
+    animation: pulse-error 0.5s ease;
+}
+
+.icon-bar-item.error .icon-element,
+.icon-btn.error .icon-element {
+    color: var(--error-border) !important;
+}
+
+.shortcut-btn.error {
+    border-color: var(--error-border);
+    border-width: 2px;
+    box-shadow: 0 0 12px var(--error-shadow);
+    animation: pulse-error 0.5s ease;
+}
+
+@keyframes pulse-error {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
 .icon-btn .bi,
 .icon-bar-item .bi {
     font-size: 18px;
@@ -193,7 +215,7 @@ hr {
     justify-content: space-between;
     align-items: center;
     gap: 8px;
-    min-width: 0; /* allow children to shrink */
+    min-width: 0;
 }
 
 .round-btn {
@@ -270,6 +292,11 @@ hr {
 
 .message-card.visible {
     display: flex;
+}
+
+/* Ocultar mensagens no modo normal (apenas aba de ícones) */
+body:not(.edit-mode) .message-card {
+    display: none !important;
 }
 
 .message-card #message-text {
@@ -410,7 +437,6 @@ hr {
     flex: 0 0 auto;
 }
 
-/* Form groups for better organization */
 .form-group {
     margin-bottom: 16px;
 }

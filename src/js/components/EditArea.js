@@ -13,6 +13,7 @@ class EditArea {
     this.closeButton = getElement('close-edit');
     
     this.shortcuts = [];
+    this.shortcutItems = []; // Armazenar referências dos itens
     this.onCloseCallback = null;
   }
 
@@ -39,6 +40,7 @@ class EditArea {
     if (!this.listContainer) return;
 
     this.shortcuts = shortcuts;
+    this.shortcutItems = []; // Resetar array
     clearElement(this.listContainer);
 
     shortcuts.forEach((shortcut, index) => {
@@ -51,6 +53,7 @@ class EditArea {
       const element = item.getElement();
       if (element) {
         this.listContainer.appendChild(element);
+        this.shortcutItems[index] = item; // Armazenar referência
       }
     });
   }
@@ -82,6 +85,34 @@ class EditArea {
   hide() {
     if (this.container) {
       this.container.classList.add('hidden');
+    }
+  }
+
+  /**
+   * Marca um botão de atalho como erro
+   * @param {number} index - Índice do atalho
+   */
+  markShortcutAsError(index) {
+    const item = this.shortcutItems[index];
+    if (item) {
+      const button = item.getApplyButton();
+      if (button) {
+        button.classList.add('error');
+      }
+    }
+  }
+
+  /**
+   * Remove marcação de erro de um botão de atalho
+   * @param {number} index - Índice do atalho
+   */
+  clearShortcutError(index) {
+    const item = this.shortcutItems[index];
+    if (item) {
+      const button = item.getApplyButton();
+      if (button) {
+        button.classList.remove('error');
+      }
     }
   }
 }

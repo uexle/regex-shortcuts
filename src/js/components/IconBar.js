@@ -8,6 +8,7 @@ class IconBar {
   constructor() {
     this.container = getElement('icon-bar');
     this.shortcuts = [];
+    this.iconElements = []; // Armazenar referências dos elementos de ícone
   }
 
   /**
@@ -20,12 +21,17 @@ class IconBar {
     if (!this.container) return;
 
     this.shortcuts = shortcuts;
+    this.iconElements = []; // Resetar array de elementos
     clearElement(this.container);
 
     // Adicionar ícone para cada atalho
     shortcuts.forEach((shortcut, index) => {
       const item = this._createIconItem(shortcut, index, onShortcutClick);
-      if (item) this.container.appendChild(item);
+      if (item) {
+        const button = item.querySelector('.icon-bar-item');
+        this.iconElements[index] = button; // Armazenar referência
+        this.container.appendChild(item);
+      }
     });
 
     // Adicionar botão de edição
@@ -52,7 +58,7 @@ class IconBar {
     const iconName = shortcut.icon 
       ? `bi-${shortcut.icon}` 
       : 'bi-link-45deg';
-    iconElement.className = `bi ${iconName}`;
+    iconElement.className = `bi ${iconName} icon-element`;
     item.title = shortcut.name || '';
 
     // Event listener
@@ -99,6 +105,28 @@ class IconBar {
   hide() {
     if (this.container) {
       this.container.classList.add('hidden');
+    }
+  }
+
+  /**
+   * Marca um ícone como erro (adiciona borda vermelha)
+   * @param {number} index - Índice do ícone
+   */
+  markIconAsError(index) {
+    const iconElement = this.iconElements[index];
+    if (iconElement) {
+      iconElement.classList.add('error');
+    }
+  }
+
+  /**
+   * Remove a marcação de erro de um ícone
+   * @param {number} index - Índice do ícone
+   */
+  clearIconError(index) {
+    const iconElement = this.iconElements[index];
+    if (iconElement) {
+      iconElement.classList.remove('error');
     }
   }
 }

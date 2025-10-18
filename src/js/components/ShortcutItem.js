@@ -42,12 +42,15 @@ class ShortcutItem {
     const iconName = this.shortcut.icon 
       ? `bi-${this.shortcut.icon}` 
       : 'bi-link-45deg';
-    iconElement.className = `bi ${iconName}`;
+    iconElement.className = `bi ${iconName} icon-element`;
 
     // Configurar nome
     const displayName = this.shortcut.name || `Shortcut ${this.index + 1}`;
     nameElement.textContent = displayName;
     applyButton.title = displayName;
+
+    // Armazenar referência do botão para poder marcar erros
+    this.applyButton = applyButton;
 
     // Event listeners
     if (applyButton) {
@@ -77,6 +80,14 @@ class ShortcutItem {
    */
   getElement() {
     return this.element;
+  }
+
+  /**
+   * Retorna o botão de aplicar atalho
+   * @returns {HTMLElement}
+   */
+  getApplyButton() {
+    return this.applyButton;
   }
 }
 

@@ -88,7 +88,7 @@ class UIManager {
     this.editArea.hide();
     
     this.iconBar.render(this.shortcuts, {
-      onShortcutClick: (shortcut) => this.handleShortcutClick(shortcut),
+      onShortcutClick: (shortcut, index) => this.handleShortcutClick(shortcut, index),
       onEditClick: () => this.toggleEditMode(true)
     });
     
@@ -103,7 +103,7 @@ class UIManager {
     
     this.editArea.setCurrentUrl(this.currentUrl);
     this.editArea.renderShortcuts(this.shortcuts, {
-      onApply: (shortcut) => this.handleShortcutClick(shortcut),
+      onApply: (shortcut, index) => this.handleShortcutClick(shortcut, index),
       onEdit: (shortcut, index) => this.handleEdit(shortcut, index),
       onDelete: (shortcut, index) => this.handleDelete(index)
     });
@@ -114,13 +114,31 @@ class UIManager {
   /**
    * Handler para clique em atalho (aplicar regex)
    * @param {Object} shortcut - Atalho a aplicar
+   * @param {number} index - Índice do atalho
    */
-  async handleShortcutClick(shortcut) {
+  async handleShortcutClick(shortcut, index) {
     const currentUrl = await chromeUtil.getCurrentTabUrl();
     const result = await shortcutService.applyShortcut(shortcut, currentUrl);
 
     if (!result.success) {
+      // Sempre mostrar mensagem de erro (a div só aparece no modo de edição via CSS)
       this.message.error(result.error);
+      
+      // Marcar ícone com erro visual (borda vermelha e cor vermelha)
+      if (this.isEditMode) {
+        this.editArea.markShortcutAsError(index);
+      } else {
+        this.iconBar.markIconAsError(index);
+      }
+      
+      // Remover o erro visual após 3 segundos
+      setTimeout(() => {
+        if (this.isEditMode) {
+          this.editArea.clearShortcutError(index);
+        } else {
+          this.iconBar.clearIconError(index);
+        }
+      }, 3000);
     }
   }
 
