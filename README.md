@@ -1,8 +1,10 @@
-# 🔗 Regex Shortcuts - Chrome Extension
+# 🔗 Regex Shortcuts
 
-Extensão para criar atalhos personalizados baseados em expressões regulares (regex) para navegação rápida entre páginas web.
+Extensão Chrome para criar atalhos personalizados baseados em expressões regulares (regex) para navegação rápida entre páginas web.
 
-## � Instalação
+> 💻 **Desenvolvedor?** Veja [CONTRIBUTING.md](CONTRIBUTING.md) para arquitetura e guia técnico completo.
+
+## 🚀 Instalação
 
 1. Clone ou baixe este repositório
 2. Abra o Chrome e vá para `chrome://extensions/`
@@ -55,141 +57,7 @@ Destino:  https://music.youtube.com/watch?v=$1
 ```
 Converte links do YouTube para YouTube Music.
 
-## �📁 Estrutura do Projeto
-
-```
-regex-shortcuts/
-├── manifest.json              # Configuração da extensão Chrome
-├── popup.html                 # Interface HTML do popup
-├── styles.css                 # Estilos CSS
-├── icon.png                   # Ícone da extensão
-├── README.md                  # Este arquivo
-└── src/
-    └── js/
-        ├── main.js                    # Ponto de entrada da aplicação
-        ├── utils/
-        │   ├── dom.js                 # Utilitários para manipulação do DOM
-        │   ├── storage.js             # Gerenciamento de Chrome Storage
-        │   └── chrome.js              # Wrapper para Chrome/Browser APIs
-        ├── services/
-        │   └── shortcutService.js     # Lógica de negócio dos atalhos
-        ├── components/
-        │   ├── Message.js             # Sistema de mensagens de feedback
-        │   ├── ShortcutItem.js        # Item individual de atalho
-        │   ├── IconBar.js             # Barra de ícones (modo normal)
-        │   ├── EditForm.js            # Formulário de edição/criação
-        │   └── EditArea.js            # Área de edição completa
-        └── ui/
-            └── UIManager.js           # Coordenador de UI e estado
-```
-
-## 🏗️ Arquitetura
-
-### Camadas da Aplicação
-
-#### 1. **Utils** (`src/js/utils/`)
-Funções utilitárias reutilizáveis sem lógica de negócio:
-- **dom.js**: Helpers para manipulação do DOM
-- **storage.js**: Interface com Chrome Storage API
-- **chrome.js**: Wrapper para APIs do Chrome (tabs, navegação)
-
-#### 2. **Services** (`src/js/services/`)
-Lógica de negócio da aplicação:
-- **shortcutService.js**: Gerencia CRUD de atalhos, validação e aplicação de regex
-
-#### 3. **Components** (`src/js/components/`)
-Componentes de UI reutilizáveis e encapsulados:
-- **Message.js**: Sistema de notificações/feedback
-- **ShortcutItem.js**: Renderiza item individual de atalho
-- **IconBar.js**: Gerencia barra de ícones (modo normal)
-- **EditForm.js**: Formulário de adicionar/editar atalhos
-- **EditArea.js**: Área de edição com lista de atalhos
-
-#### 4. **UI Manager** (`src/js/ui/`)
-Coordenação e orquestração:
-- **UIManager.js**: Gerencia estado global, coordena componentes
-
-#### 5. **Entry Point** (`src/js/main.js`)
-Inicialização da aplicação
-
-### Fluxo de Dados
-
-```
-main.js
-  └─> UIManager.init()
-       ├─> shortcutService.getAllShortcuts()
-       │    └─> storage.loadShortcuts()
-       │         └─> Chrome Storage API
-       │
-       ├─> Renderiza componentes
-       │    ├─> IconBar (modo normal)
-       │    ├─> EditArea (modo edição)
-       │    └─> Message (feedback)
-       │
-       └─> Event handlers
-            └─> shortcutService.applyShortcut()
-                 └─> chrome.navigateTo()
-```
-
-## 🎯 Princípios de Design
-
-- **Separação de Responsabilidades**: Utils, Services, Components e UI Manager têm papéis distintos
-- **Encapsulamento**: Cada componente gerencia seu próprio estado e DOM
-- **Modularidade**: Cada arquivo exporta uma funcionalidade específica (ES6 modules)
-- **Testabilidade**: Componentes independentes podem ser testados isoladamente
-
-## � Desenvolvimento
-
-### Fazer Mudanças
-
-1. Edite os arquivos em `src/js/`
-2. Recarregue a extensão em `chrome://extensions/` (clique no ícone de reload)
-3. Teste no popup
-
-### Debug
-
-1. Clique com botão direito no ícone da extensão
-2. Selecione **"Inspecionar popup"**
-3. Use o Console do DevTools para ver logs e erros
-
-### Adicionar Novo Componente
-
-```javascript
-// 1. Criar src/js/components/MyComponent.js
-class MyComponent {
-  constructor() {
-    // Setup
-  }
-  render(data) {
-    // Renderizar
-  }
-}
-export default MyComponent;
-
-// 2. Importar em ui/UIManager.js
-import MyComponent from '../components/MyComponent.js';
-
-// 3. Usar no UIManager
-this.myComponent = new MyComponent();
-```
-
-### Adicionar Nova Validação
-
-```javascript
-// Em services/shortcutService.js
-export const validateShortcut = (shortcut) => {
-  const errors = [];
-  
-  // Adicione sua validação aqui
-  if (minhaCondicao) {
-    errors.push('Mensagem de erro');
-  }
-  
-  return { valid: errors.length === 0, errors };
-}
-```
-
-## � Troubleshooting
+## 🐛 Problemas Comuns
 
 ### Extensão não carrega
 - Verifique se todas as pastas e arquivos estão presentes
@@ -199,7 +67,7 @@ export const validateShortcut = (shortcut) => {
 ### Atalho não funciona
 - Teste a regex em [regex101.com](https://regex101.com)
 - Verifique se a URL atual corresponde ao padrão
-- Abra o console do popup para ver erros
+- Abra o console do popup para ver erros (botão direito → Inspecionar popup)
 - Use `\` para escapar caracteres especiais (ex: `\.` para ponto literal)
 
 ### URL não trunca
@@ -214,32 +82,25 @@ export const validateShortcut = (shortcut) => {
 ## 📝 Recursos Úteis
 
 - [Chrome Extension Docs](https://developer.chrome.com/docs/extensions/)
-- [Storage API](https://developer.chrome.com/docs/extensions/reference/storage/)
-- [Tabs API](https://developer.chrome.com/docs/extensions/reference/tabs/)
-- [Bootstrap Icons](https://icons.getbootstrap.com/)
-- [Regex Tester](https://regex101.com/)
+- [Bootstrap Icons](https://icons.getbootstrap.com/) - Catálogo de ícones disponíveis
+- [Regex Tester](https://regex101.com/) - Teste suas regex antes de usar
 
 ## 🤝 Contribuindo
 
+Contribuições são bem-vindas! 
+
 1. Fork o projeto
-2. Crie uma branch (`git checkout -b feature/MinhaFeature`)
+2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
 3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
 4. Push para a branch (`git push origin feature/MinhaFeature`)
 5. Abra um Pull Request
 
-### Padrões de Código
-- Use ES6+ features
-- Mantenha funções pequenas (< 50 linhas)
-- Documente com JSDoc
-- Siga a estrutura de camadas existente
-- Teste manualmente antes de commitar
+📖 **Leia o [CONTRIBUTING.md](CONTRIBUTING.md)** para detalhes sobre a arquitetura, padrões de código e guias de desenvolvimento.
 
 ## 📄 Licença
 
 MIT
 
-## ✨ Créditos
+---
 
-**Desenvolvido por**: Weslei (uexle)  
-**Versão**: 2.0.0  
-**Data**: Outubro 2025
+⭐ Se este projeto foi útil para você, considere dar uma estrela no GitHub!
