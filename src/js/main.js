@@ -17,10 +17,8 @@ const initApp = async () => {
   }
 };
 
-// Aguarda carregamento do DOM
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initApp);
 } else {
-  // DOM já carregado
   initApp();
 }

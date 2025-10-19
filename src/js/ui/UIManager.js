@@ -25,16 +25,9 @@ class UIManager {
    * Inicializa o gerenciador de UI
    */
   async init() {
-    // Carregar URL atual
     this.currentUrl = await chromeUtil.getCurrentTabUrl();
-
-    // Carregar atalhos
     await this.loadShortcuts();
-
-    // Configurar componentes
     this._setupComponents();
-
-    // Renderizar interface inicial
     this.renderNormalMode();
   }
 
@@ -43,12 +36,14 @@ class UIManager {
    * @private
    */
   _setupComponents() {
-    // Configurar área de edição
     this.editArea.init({
       onClose: () => this.toggleEditMode(false)
     });
 
-    // Configurar formulário
+    this.editForm.onValidateLoop((shortcut) => {
+      return shortcutService.wouldCauseLoop(shortcut);
+    });
+
     this.editForm.onValidationError((errorMessage) => {
       this.message.error(errorMessage);
     });
@@ -57,11 +52,9 @@ class UIManager {
       await this.handleFormSubmit(data, index);
     });
 
-    // Import/Export handlers
     this.editArea.onExport = async () => {
       try {
         const json = await shortcutService.exportShortcuts();
-        // Criar blob e forçar download
         const blob = new Blob([json], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -85,7 +78,6 @@ class UIManager {
           return;
         }
 
-        // Recarregar atalhos e re-renderizar
         await this.loadShortcuts();
         this.renderEditMode();
         this.message.success('Atalhos importados com sucesso.');
@@ -109,10 +101,8 @@ class UIManager {
   async toggleEditMode(enable) {
     this.isEditMode = enable;
 
-    // Atualizar URL atual
     this.currentUrl = await chromeUtil.getCurrentTabUrl();
 
-    // Alternar body class
     if (enable) {
       document.body.classList.add('edit-mode');
       this.renderEditMode();
@@ -163,17 +153,14 @@ class UIManager {
     const result = await shortcutService.applyShortcut(shortcut, currentUrl);
 
     if (!result.success) {
-      // Sempre mostrar mensagem de erro (a div só aparece no modo de edição via CSS)
       this.message.error(result.error);
       
-      // Marcar ícone com erro visual (borda vermelha e cor vermelha)
       if (this.isEditMode) {
         this.editArea.markShortcutAsError(index);
       } else {
         this.iconBar.markIconAsError(index);
       }
       
-      // Remover o erro visual após 3 segundos
       setTimeout(() => {
         if (this.isEditMode) {
           this.editArea.clearShortcutError(index);
@@ -205,7 +192,6 @@ class UIManager {
       await shortcutService.removeShortcut(index);
       await this.loadShortcuts();
       
-      // Re-renderizar
       if (this.isEditMode) {
         this.renderEditMode();
       } else {
@@ -228,18 +214,14 @@ class UIManager {
       const result = await shortcutService.saveShortcut(data, index);
 
       if (!result.success) {
-        // Mostrar erros de validação
         this.message.error(result.errors.join('<br>'));
         return;
       }
 
-      // Atualizar lista
       this.shortcuts = result.shortcuts;
 
-      // Re-renderizar
       this.renderEditMode();
 
-      // Mensagem de sucesso
       const action = index !== null ? 'atualizado' : 'adicionado';
       this.message.success(`Atalho ${action} com sucesso!`);
 
@@ -257,7 +239,6 @@ class UIManager {
     try {
       this.shortcuts = await shortcutService.reorderShortcuts(fromIndex, toIndex);
       
-      // Re-renderizar para atualizar a lista
       this.renderEditMode();
       
       this.message.success('Ordem dos atalhos atualizada!');

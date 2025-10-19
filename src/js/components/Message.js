@@ -33,29 +33,29 @@ class Message {
   show(text, type = 'info', duration = 5000) {
     if (!this.messageElement || !this.messageText) return;
 
-    // Limpar timeout anterior
     if (this.timeout) {
       clearTimeout(this.timeout);
       this.timeout = null;
     }
 
-    // Configurar mensagem
+    removeClass(this.messageElement, 'message-error');
+    removeClass(this.messageElement, 'message-success');
+    removeClass(this.messageElement, 'message-info');
+
     this.messageText.innerHTML = text;
     addClass(this.messageElement, 'visible');
 
-    // Aplicar estilo baseado no tipo
     switch (type) {
       case 'error':
-        this.messageElement.style.background = 'var(--error-bg)';
+        addClass(this.messageElement, 'message-error');
         break;
       case 'success':
-        this.messageElement.style.background = 'var(--bg-overlay-light)';
+        addClass(this.messageElement, 'message-success');
         break;
       default:
-        this.messageElement.style.background = 'var(--bg-overlay-light)';
+        addClass(this.messageElement, 'message-info');
     }
 
-    // Auto-ocultar se duration > 0
     if (duration > 0) {
       this.timeout = setTimeout(() => this.hide(), duration);
     }

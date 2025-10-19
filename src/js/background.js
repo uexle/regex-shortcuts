@@ -7,10 +7,8 @@
  * Manter estas funções sincronizadas ao modificar shortcutService.js.
  */
 
-// Armazena IDs de abas que foram restauradas da última sessão
 const restoredTabs = new Set();
 
-// Flag para detectar se é a primeira vez que o service worker inicia
 let isFirstStart = true;
 
 /**
@@ -61,11 +59,10 @@ const wouldCauseLoop = (shortcut, url) => {
     
     const destination = replacePlaceholders(shortcut.target, match);
     
-    // Verificar se o destino também daria match no padrão
     return regex.test(destination);
   } catch (error) {
     console.error('Erro ao verificar loop:', error);
-    return true; // Em caso de erro, assumir que causaria loop por segurança
+    return true;
   }
 };
 
@@ -86,18 +83,15 @@ const applyShortcutToTab = async (tabId, url, shortcut) => {
     
     if (!match) return;
     
-    // Validação de segurança: verificar se causaria loop
     if (wouldCauseLoop(shortcut, url)) {
       console.warn(`[Auto-Exec Bloqueado] "${shortcut.name}": loop detectado para ${url}`);
       return;
     }
     
-    // Calcular destino com valores capturados
     const destination = replacePlaceholders(shortcut.target, match);
     
     console.log(`[Auto-Exec] "${shortcut.name}": ${url} → ${destination}`);
     
-    // Navegar para o destino
     if (shortcut.openNewTab) {
       await chrome.tabs.create({ url: destination });
     } else {
@@ -114,31 +108,27 @@ const applyShortcutToTab = async (tabId, url, shortcut) => {
  * @param {string} url - URL a verificar
  */
 const checkAndApplyAutoExecuteShortcuts = async (tabId, url) => {
-  // Proteção: ignorar abas restauradas da sessão anterior
   if (restoredTabs.has(tabId)) {
     console.log(`[Auto-Exec] Ignorando aba restaurada: ${tabId}`);
     return;
   }
   
-  // Proteção: ignorar URLs internas do navegador
   if (!url || url.startsWith('chrome://') || url.startsWith('chrome-extension://') || url.startsWith('about:')) {
     return;
   }
   
   const shortcuts = await loadShortcuts();
   
-  // Filtrar apenas atalhos com auto-execução ativada
   const autoExecuteShortcuts = shortcuts.filter(s => s.autoExecute === true);
   
   if (autoExecuteShortcuts.length === 0) return;
   
-  // Tentar aplicar o primeiro atalho compatível
   for (const shortcut of autoExecuteShortcuts) {
     try {
       const regex = new RegExp(shortcut.pattern);
       if (regex.test(url)) {
         await applyShortcutToTab(tabId, url, shortcut);
-        break; // Aplicar apenas o primeiro atalho compatível
+        break;
       }
     } catch (error) {
       console.error(`[Auto-Exec] Erro ao verificar "${shortcut.name}":`, error);
@@ -188,7 +178,6 @@ const markRestoredTabs = (reason) => {
     
     console.log(`[Proteção Sessão] ${restoredTabs.size} abas marcadas como restauradas`);
     
-    // Limpar proteção após 10 segundos
     setTimeout(() => {
       restoredTabs.clear();
       isFirstStart = false;

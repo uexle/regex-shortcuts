@@ -8,7 +8,7 @@ class IconBar {
   constructor() {
     this.container = getElement('icon-bar');
     this.shortcuts = [];
-    this.iconElements = []; // Armazenar referências dos elementos de ícone
+    this.iconElements = [];
   }
 
   /**
@@ -21,20 +21,18 @@ class IconBar {
     if (!this.container) return;
 
     this.shortcuts = shortcuts;
-    this.iconElements = []; // Resetar array de elementos
+    this.iconElements = [];
     clearElement(this.container);
 
-    // Adicionar ícone para cada atalho
     shortcuts.forEach((shortcut, index) => {
       const item = this._createIconItem(shortcut, index, onShortcutClick);
       if (item) {
         const button = item.querySelector('.icon-bar-item');
-        this.iconElements[index] = button; // Armazenar referência
+        this.iconElements[index] = button; 
         this.container.appendChild(item);
       }
     });
 
-    // Adicionar botão de edição
     const editButton = this._createEditButton(onEditClick);
     if (editButton) this.container.appendChild(editButton);
   }
@@ -54,14 +52,12 @@ class IconBar {
     const item = clone.querySelector('.icon-bar-item');
     const iconElement = clone.querySelector('.bi');
 
-    // Configurar ícone
     const iconName = shortcut.icon 
       ? `bi-${shortcut.icon}` 
       : 'bi-link-45deg';
     iconElement.className = `bi ${iconName} icon-element`;
     item.title = shortcut.name || '';
 
-    // Event listener
     item.addEventListener('click', () => {
       if (onClick) onClick(shortcut, index);
     });

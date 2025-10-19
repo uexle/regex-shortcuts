@@ -20,7 +20,7 @@ class ShortcutItem {
     this.onDelete = onDelete;
 
     this.element = this._createElement();
-    this.containerElement = null; // Será definido após adicionar ao DOM
+    this.containerElement = null;
   }
 
   /**
@@ -32,7 +32,6 @@ class ShortcutItem {
     const clone = createFromTemplate('shortcut-item-template');
     if (!clone) return null;
 
-    // Selecionar elementos
     const itemElement = clone.querySelector('.shortcut-item');
     const iconElement = clone.querySelector('.shortcut-icon');
     const nameTextElement = clone.querySelector('.shortcut-name-text');
@@ -41,35 +40,29 @@ class ShortcutItem {
     const editButton = clone.querySelector('[data-action="edit"]');
     const deleteButton = clone.querySelector('[data-action="delete"]');
 
-    // Tornar item arrastável e definir index
     if (itemElement) {
       itemElement.draggable = true;
       itemElement.dataset.index = this.index;
       this.containerElement = itemElement;
     }
 
-    // Configurar ícone
     const iconName = this.shortcut.icon 
       ? `bi-${this.shortcut.icon}` 
       : 'bi-link-45deg';
     iconElement.className = `bi ${iconName} icon-element`;
 
-    // Configurar nome
     const displayName = this.shortcut.name || `Shortcut ${this.index + 1}`;
     if (nameTextElement) {
       nameTextElement.textContent = displayName;
     }
     applyButton.title = displayName;
 
-    // Mostrar ou esconder badge de auto-execução
     if (this.shortcut.autoExecute && autoExecuteBadge) {
       autoExecuteBadge.classList.remove('hidden');
     }
 
-    // Armazenar referência do botão para poder marcar erros
     this.applyButton = applyButton;
 
-    // Event listeners
     if (applyButton) {
       applyButton.addEventListener('click', () => {
         if (this.onApply) this.onApply(this.shortcut, this.index);

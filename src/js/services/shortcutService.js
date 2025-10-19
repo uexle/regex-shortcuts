@@ -13,7 +13,6 @@ import * as chromeUtil from '../utils/chrome.js';
  */
 export const calculateDestination = (shortcut, currentUrl) => {
   try {
-    // Validar entrada
     if (!shortcut || !shortcut.pattern || !shortcut.target) {
       return { success: false, error: 'Atalho inválido' };
     }
@@ -22,7 +21,6 @@ export const calculateDestination = (shortcut, currentUrl) => {
       return { success: false, error: 'URL não detectada' };
     }
 
-    // Criar regex e testar match
     const regex = new RegExp(shortcut.pattern);
     const match = currentUrl.match(regex);
 
@@ -33,7 +31,6 @@ export const calculateDestination = (shortcut, currentUrl) => {
       };
     }
 
-    // Substituir grupos capturados
     const destination = replacePlaceholders(shortcut.target, match);
 
     return { success: true, destination };
@@ -52,7 +49,6 @@ export const calculateDestination = (shortcut, currentUrl) => {
  * @returns {Promise<{success: boolean, error?: string}>}
  */
 export const applyShortcut = async (shortcut, currentUrl) => {
-  // Calcular destino
   const result = calculateDestination(shortcut, currentUrl);
   
   if (!result.success) {
@@ -60,7 +56,6 @@ export const applyShortcut = async (shortcut, currentUrl) => {
   }
 
   try {
-    // Navegar para o destino
     await chromeUtil.navigateTo(result.destination, shortcut.openNewTab);
     return { success: true };
   } catch (err) {
@@ -100,7 +95,6 @@ export const wouldCauseLoop = (shortcut, testUrl = null) => {
 
     const regex = new RegExp(shortcut.pattern);
     
-    // Se testUrl foi fornecida, usar ela (validação em runtime)
     if (testUrl) {
       const match = testUrl.match(regex);
       if (!match) return false;
@@ -108,16 +102,11 @@ export const wouldCauseLoop = (shortcut, testUrl = null) => {
       const destination = replacePlaceholders(shortcut.target, match);
       return regex.test(destination);
     }
-    
-    // Validação estática: verificar se o padrão e destino são muito similares
-    
-    // 1. Se o destino não tem placeholders, testar direto
+        
     if (!shortcut.target.includes('$')) {
       return regex.test(shortcut.target);
     }
     
-    // 2. Verificar se o destino tem a mesma estrutura base do padrão
-    // Remover grupos de captura do padrão para comparação
     const patternBase = shortcut.pattern
       .replace(/\^/g, '')
       .replace(/\$$/g, '')
@@ -131,13 +120,10 @@ export const wouldCauseLoop = (shortcut, testUrl = null) => {
       .replace(/\$\d+/g, '')
       .trim();
     
-    // Se as bases são iguais ou muito similares, pode causar loop
     if (patternBase === targetBase) {
       return true;
     }
     
-    // 3. Testar com um valor genérico que provavelmente daria match
-    // Usar um valor que seja válido para a maioria dos casos
     const testValue = 'test123';
     let testDestination = shortcut.target;
     for (let i = 1; i <= 9; i++) {
@@ -145,14 +131,12 @@ export const wouldCauseLoop = (shortcut, testUrl = null) => {
       testDestination = testDestination.replace(placeholder, testValue);
     }
     
-    // Se o destino de teste der match no padrão, pode causar loop
     if (regex.test(testDestination)) {
       return true;
     }
     
     return false;
   } catch (error) {
-    // Em caso de erro, assumir que não causa loop
     return false;
   }
 };
@@ -172,7 +156,6 @@ export const validateShortcut = (shortcut) => {
   if (!shortcut.pattern || !shortcut.pattern.trim()) {
     errors.push('Padrão (regex) é obrigatório');
   } else {
-    // Tentar compilar a regex para verificar se é válida
     try {
       new RegExp(shortcut.pattern);
     } catch (e) {
@@ -184,7 +167,6 @@ export const validateShortcut = (shortcut) => {
     errors.push('Destino é obrigatório');
   }
   
-  // Validar auto-execução
   if (shortcut.autoExecute && wouldCauseLoop(shortcut)) {
     errors.push('Auto-execução não permitida: o padrão corresponde ao destino');
   }
@@ -202,13 +184,11 @@ export const validateShortcut = (shortcut) => {
  * @returns {Promise<{success: boolean, shortcuts?: Array, errors?: string[]}>}
  */
 export const saveShortcut = async (shortcutData, index = null) => {
-  // Validar dados
   const validation = validateShortcut(shortcutData);
   if (!validation.valid) {
     return { success: false, errors: validation.errors };
   }
 
-  // Salvar ou atualizar
   let shortcuts;
   if (index !== null && index >= 0) {
     shortcuts = await storage.updateShortcut(index, shortcutData);

@@ -77,16 +77,13 @@ export const deleteShortcut = async (index) => {
 export const reorderShortcuts = async (fromIndex, toIndex) => {
   const shortcuts = await loadShortcuts();
   
-  // Validar índices
   if (fromIndex < 0 || fromIndex >= shortcuts.length ||
       toIndex < 0 || toIndex >= shortcuts.length) {
     return shortcuts;
   }
   
-  // Remover item da posição original
   const [movedItem] = shortcuts.splice(fromIndex, 1);
   
-  // Inserir item na nova posição
   shortcuts.splice(toIndex, 0, movedItem);
   
   await saveShortcuts(shortcuts);
@@ -111,7 +108,6 @@ export const importShortcuts = async (jsonData) => {
   try {
     const shortcuts = JSON.parse(jsonData);
     
-    // Validar se é um array
     if (!Array.isArray(shortcuts)) {
       return { 
         success: false, 
@@ -119,7 +115,6 @@ export const importShortcuts = async (jsonData) => {
       };
     }
     
-    // Validar estrutura básica dos atalhos
     for (const shortcut of shortcuts) {
       if (!shortcut.name || !shortcut.pattern || !shortcut.target) {
         return { 
@@ -129,7 +124,6 @@ export const importShortcuts = async (jsonData) => {
       }
     }
     
-    // Salvar os atalhos importados
     await saveShortcuts(shortcuts);
     
     return { success: true, shortcuts };

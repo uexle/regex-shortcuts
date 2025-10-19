@@ -356,6 +356,19 @@ hr {
     display: flex;
 }
 
+.message-card.message-error {
+    background: var(--error-bg);
+    border-color: var(--error-border);
+}
+
+.message-card.message-success {
+    background: var(--bg-overlay-light);
+}
+
+.message-card.message-info {
+    background: var(--bg-overlay-light);
+}
+
 /* Ocultar mensagens no modo normal (apenas aba de ícones) */
 body:not(.edit-mode) .message-card {
     display: none !important;
