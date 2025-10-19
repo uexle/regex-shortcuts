@@ -7,10 +7,8 @@
   <meta name="description" content="Extensão para criar atalhos com regex para navegação rápida">
   <title>Regex Shortcuts</title>
 
-  <!-- External Dependencies -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-  <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -37,7 +35,6 @@
        ==================== -->
   <section id="edit-area" class="panel hidden" aria-labelledby="edit-area-title">
 
-    <!-- Header with current URL -->
     <header class="edit-header">
       <div class="small">
         <span id="current-url" aria-label="URL da página atual">carregando...</span>
@@ -56,23 +53,18 @@
       <input type="file" id="import-file-input" accept=".json" style="display: none;">
     </header>
 
-    <!-- Shortcuts List -->
     <div id="shortcuts-list" role="list" aria-label="Lista de atalhos configurados">
       <!-- Shortcut items will be dynamically inserted here -->
     </div>
 
     <hr aria-hidden="true">
 
-    <!-- Add/Edit Shortcut Form -->
     <form id="add-form" aria-label="Formulário de atalho">
-
-      <!-- Shortcut Name -->
       <div class="form-group">
         <label for="name">Nome do atalho</label>
         <input id="name" type="text" autocomplete="off" required aria-required="true" placeholder="ex: Painel Admin">
       </div>
 
-      <!-- Icon Selection -->
       <div class="form-group">
         <label for="icon">Ícone do atalho</label>
         <div class="icon-input-wrap">
@@ -87,7 +79,6 @@
         </small>
       </div>
 
-      <!-- Regex Pattern -->
       <div class="form-group">
         <label for="pattern">Regex de captura</label>
         <input id="pattern" type="text" placeholder="ex: https://example.com/model/(\d+)" autocomplete="off" required
@@ -97,7 +88,6 @@
         </small>
       </div>
 
-      <!-- Target URL -->
       <div class="form-group">
         <label for="target">Destino</label>
         <input id="target" type="text" placeholder="ex: https://example.com/admin/model/$1" autocomplete="off" required
@@ -107,7 +97,6 @@
         </small>
       </div>
 
-      <!-- Open in New Tab Option -->
       <div class="form-group">
         <label class="checkbox-label">
           <input id="open-new-tab" type="checkbox" aria-label="Abrir atalho em nova guia">
@@ -115,7 +104,6 @@
         </label>
       </div>
 
-      <!-- Auto Execute Option -->
       <div class="form-group">
         <label class="checkbox-label">
           <input id="auto-execute" type="checkbox" aria-label="Executar automaticamente ao acessar páginas">
@@ -126,7 +114,6 @@
         </small>
       </div>
 
-      <!-- Submit Button -->
       <button type="submit">Salvar</button>
     </form>
 
@@ -136,7 +123,6 @@
        TEMPLATES
        ==================== -->
 
-  <!-- Shortcut Item Template (for edit list) -->
   <template id="shortcut-item-template">
     <div class="shortcut-item" role="listitem">
       <div class="drag-handle" title="Arrastar para reordenar">
@@ -160,14 +146,12 @@
     </div>
   </template>
 
-  <!-- Icon Bar Item Template -->
   <template id="icon-bar-item-template">
     <button class="icon-bar-item" type="button" data-action="apply-shortcut">
       <i class="bi" aria-hidden="true"></i>
     </button>
   </template>
 
-  <!-- Edit Button Template -->
   <template id="edit-button-template">
     <button class="icon-btn edit-action" type="button" data-action="toggle-edit" title="Configurar atalhos"
       aria-label="Configurar atalhos">

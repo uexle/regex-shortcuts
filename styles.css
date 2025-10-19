@@ -369,7 +369,6 @@ hr {
     background: var(--bg-overlay-light);
 }
 
-/* Ocultar mensagens no modo normal (apenas aba de ícones) */
 body:not(.edit-mode) .message-card {
     display: none !important;
 }
@@ -557,7 +556,6 @@ body:not(.edit-mode) .message-card {
     font-style: italic;
 }
 
-/* Badge de auto-execute mais destacado */
 .shortcut-item .auto-execute-badge {
     animation: pulse-auto 2s ease-in-out infinite;
 }
