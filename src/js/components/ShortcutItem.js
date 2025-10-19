@@ -20,6 +20,7 @@ class ShortcutItem {
     this.onDelete = onDelete;
 
     this.element = this._createElement();
+    this.containerElement = null; // Será definido após adicionar ao DOM
   }
 
   /**
@@ -32,12 +33,20 @@ class ShortcutItem {
     if (!clone) return null;
 
     // Selecionar elementos
+    const itemElement = clone.querySelector('.shortcut-item');
     const iconElement = clone.querySelector('.shortcut-icon');
     const nameTextElement = clone.querySelector('.shortcut-name-text');
     const autoExecuteBadge = clone.querySelector('.auto-execute-badge');
     const applyButton = clone.querySelector('[data-action="apply"]');
     const editButton = clone.querySelector('[data-action="edit"]');
     const deleteButton = clone.querySelector('[data-action="delete"]');
+
+    // Tornar item arrastável e definir index
+    if (itemElement) {
+      itemElement.draggable = true;
+      itemElement.dataset.index = this.index;
+      this.containerElement = itemElement;
+    }
 
     // Configurar ícone
     const iconName = this.shortcut.icon 
@@ -96,6 +105,14 @@ class ShortcutItem {
    */
   getApplyButton() {
     return this.applyButton;
+  }
+
+  /**
+   * Retorna o elemento container do item
+   * @returns {HTMLElement}
+   */
+  getContainer() {
+    return this.containerElement;
   }
 }
 

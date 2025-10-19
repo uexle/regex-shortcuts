@@ -18,6 +18,10 @@ class EditArea {
     this.shortcuts = [];
     this.shortcutItems = []; // Armazenar referências dos itens
     this.onCloseCallback = null;
+    
+    // Drag and drop state
+    this.draggedElement = null;
+    this.draggedIndex = null;
   }
 
   /**
@@ -62,11 +66,12 @@ class EditArea {
    * @param {Array} shortcuts - Lista de atalhos
    * @param {Object} callbacks - Callbacks para ações nos atalhos
    */
-  renderShortcuts(shortcuts, { onApply, onEdit, onDelete }) {
+  renderShortcuts(shortcuts, { onApply, onEdit, onDelete, onReorder }) {
     if (!this.listContainer) return;
 
     this.shortcuts = shortcuts;
     this.shortcutItems = []; // Resetar array
+    this.onReorderCallback = onReorder;
     clearElement(this.listContainer);
 
     shortcuts.forEach((shortcut, index) => {
@@ -81,6 +86,12 @@ class EditArea {
         this.listContainer.appendChild(element);
         this.shortcutItems[index] = item; // Armazenar referência
       }
+    });
+
+    // Configurar drag and drop APÓS todos os elementos serem adicionados ao DOM
+    const allItems = this.listContainer.querySelectorAll('.shortcut-item');
+    allItems.forEach((container, index) => {
+      this._setupDragAndDrop(container, index);
     });
   }
 
@@ -140,6 +151,86 @@ class EditArea {
         button.classList.remove('error');
       }
     }
+  }
+
+  /**
+   * Configura event listeners de drag and drop para um item
+   * @private
+   * @param {HTMLElement} element - Elemento do item
+   * @param {number} index - Índice do item
+   */
+  _setupDragAndDrop(element, index) {
+    // Drag start
+    element.addEventListener('dragstart', (e) => {
+      this.draggedElement = element;
+      this.draggedIndex = index;
+      element.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', index.toString());
+      console.log('Drag started:', index);
+    });
+
+    // Drag end
+    element.addEventListener('dragend', (e) => {
+      element.classList.remove('dragging');
+      this.draggedElement = null;
+      this.draggedIndex = null;
+      
+      // Remover todas as classes de drag-over
+      const allItems = this.listContainer.querySelectorAll('.shortcut-item');
+      allItems.forEach(item => item.classList.remove('drag-over'));
+      console.log('Drag ended');
+    });
+
+    // Drag over - CRÍTICO para permitir drop
+    element.addEventListener('dragover', (e) => {
+      e.preventDefault(); // Necessário para permitir drop!
+      e.stopPropagation();
+      e.dataTransfer.dropEffect = 'move';
+      
+      if (this.draggedElement && this.draggedElement !== element) {
+        element.classList.add('drag-over');
+      }
+      return false;
+    });
+
+    // Drag enter
+    element.addEventListener('dragenter', (e) => {
+      e.preventDefault(); // Necessário para permitir drop!
+      if (this.draggedElement && this.draggedElement !== element) {
+        element.classList.add('drag-over');
+      }
+    });
+
+    // Drag leave
+    element.addEventListener('dragleave', (e) => {
+      element.classList.remove('drag-over');
+    });
+
+    // Drop
+    element.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      console.log('Drop event fired');
+      element.classList.remove('drag-over');
+      
+      if (this.draggedElement && this.draggedElement !== element) {
+        const targetIndex = parseInt(element.dataset.index);
+        
+        console.log('Reordering from', this.draggedIndex, 'to', targetIndex);
+        
+        if (this.draggedIndex !== null && targetIndex !== null && 
+            this.draggedIndex !== targetIndex) {
+          // Chamar callback de reordenação
+          if (this.onReorderCallback) {
+            this.onReorderCallback(this.draggedIndex, targetIndex);
+          }
+        }
+      }
+      
+      return false;
+    });
   }
 }
 

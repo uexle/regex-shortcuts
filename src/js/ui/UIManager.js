@@ -146,7 +146,8 @@ class UIManager {
     this.editArea.renderShortcuts(this.shortcuts, {
       onApply: (shortcut, index) => this.handleShortcutClick(shortcut, index),
       onEdit: (shortcut, index) => this.handleEdit(shortcut, index),
-      onDelete: (shortcut, index) => this.handleDelete(index)
+      onDelete: (shortcut, index) => this.handleDelete(index),
+      onReorder: (fromIndex, toIndex) => this.handleReorder(fromIndex, toIndex)
     });
     
     this.editArea.show();
@@ -244,6 +245,24 @@ class UIManager {
 
     } catch (error) {
       this.message.error('Erro ao salvar atalho: ' + error.message);
+    }
+  }
+
+  /**
+   * Handler para reordenar atalhos
+   * @param {number} fromIndex - Índice de origem
+   * @param {number} toIndex - Índice de destino
+   */
+  async handleReorder(fromIndex, toIndex) {
+    try {
+      this.shortcuts = await shortcutService.reorderShortcuts(fromIndex, toIndex);
+      
+      // Re-renderizar para atualizar a lista
+      this.renderEditMode();
+      
+      this.message.success('Ordem dos atalhos atualizada!');
+    } catch (error) {
+      this.message.error('Erro ao reordenar atalhos: ' + error.message);
     }
   }
 }

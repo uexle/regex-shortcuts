@@ -229,6 +229,16 @@ export const removeShortcut = async (index) => {
 };
 
 /**
+ * Reordena atalhos
+ * @param {number} fromIndex - Índice de origem
+ * @param {number} toIndex - Índice de destino
+ * @returns {Promise<Array>} Lista atualizada de atalhos
+ */
+export const reorderShortcuts = async (fromIndex, toIndex) => {
+  return await storage.reorderShortcuts(fromIndex, toIndex);
+};
+
+/**
  * Carrega todos os atalhos
  * @returns {Promise<Array>} Lista de atalhos
  */

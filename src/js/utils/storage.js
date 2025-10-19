@@ -69,6 +69,31 @@ export const deleteShortcut = async (index) => {
 };
 
 /**
+ * Reordena atalhos movendo um item de uma posição para outra
+ * @param {number} fromIndex - Índice de origem
+ * @param {number} toIndex - Índice de destino
+ * @returns {Promise<Array>} Lista atualizada de atalhos
+ */
+export const reorderShortcuts = async (fromIndex, toIndex) => {
+  const shortcuts = await loadShortcuts();
+  
+  // Validar índices
+  if (fromIndex < 0 || fromIndex >= shortcuts.length ||
+      toIndex < 0 || toIndex >= shortcuts.length) {
+    return shortcuts;
+  }
+  
+  // Remover item da posição original
+  const [movedItem] = shortcuts.splice(fromIndex, 1);
+  
+  // Inserir item na nova posição
+  shortcuts.splice(toIndex, 0, movedItem);
+  
+  await saveShortcuts(shortcuts);
+  return shortcuts;
+};
+
+/**
  * Exporta atalhos como JSON
  * @returns {Promise<string>} JSON com todos os atalhos
  */
