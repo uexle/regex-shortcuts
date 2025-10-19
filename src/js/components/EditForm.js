@@ -3,6 +3,7 @@
  */
 
 import { getElement } from '../utils/dom.js';
+import * as shortcutService from '../services/shortcutService.js';
 
 class EditForm {
   constructor() {
@@ -12,11 +13,21 @@ class EditForm {
     this.patternInput = getElement('pattern');
     this.targetInput = getElement('target');
     this.openNewTabInput = getElement('open-new-tab');
+    this.autoExecuteInput = getElement('auto-execute');
     
     this.editIndex = null;
     this.onSubmitCallback = null;
+    this.onValidationErrorCallback = null;
 
     this._setupEventListeners();
+  }
+
+  /**
+   * Define callback para erros de validação
+   * @param {Function} callback - Função a ser chamada quando houver erro de validação
+   */
+  onValidationError(callback) {
+    this.onValidationErrorCallback = callback;
   }
 
   /**
@@ -30,6 +41,62 @@ class EditForm {
       event.preventDefault();
       this._handleSubmit();
     });
+    
+    // Validar loop quando auto-execute é marcado
+    this.autoExecuteInput?.addEventListener('change', () => {
+      this._validateAutoExecute();
+    });
+    
+    // Revalidar quando padrão ou destino mudam (se auto-execute estiver marcado)
+    this.patternInput?.addEventListener('input', () => {
+      if (this.autoExecuteInput?.checked) {
+        this._validateAutoExecute();
+      }
+    });
+    
+    this.targetInput?.addEventListener('input', () => {
+      if (this.autoExecuteInput?.checked) {
+        this._validateAutoExecute();
+      }
+    });
+  }
+  
+  /**
+   * Valida se auto-execute causaria loop
+   * @private
+   */
+  _validateAutoExecute() {
+    if (!this.autoExecuteInput?.checked) {
+      return;
+    }
+    
+    const pattern = this.patternInput?.value.trim();
+    const target = this.targetInput?.value.trim();
+    
+    if (!pattern || !target) {
+      return;
+    }
+    
+    // Validar se o padrão é válido primeiro
+    try {
+      new RegExp(pattern);
+    } catch (error) {
+      // Se regex inválida, não validar loop (será validado no submit)
+      return;
+    }
+    
+    // Usar a função do service para validar
+    const shortcut = { pattern, target };
+    
+    if (shortcutService.wouldCauseLoop(shortcut)) {
+      // Desmarcar checkbox
+      this.autoExecuteInput.checked = false;
+      
+      // Notificar UIManager sobre o erro
+      if (this.onValidationErrorCallback) {
+        this.onValidationErrorCallback('Auto-execução não permitida: o padrão corresponde ao destino');
+      }
+    }
   }
 
   /**
@@ -61,7 +128,8 @@ class EditForm {
       icon: this.iconInput?.value.trim() || '',
       pattern: this.patternInput?.value.trim() || '',
       target: this.targetInput?.value.trim() || '',
-      openNewTab: this.openNewTabInput?.checked || false
+      openNewTab: this.openNewTabInput?.checked || false,
+      autoExecute: this.autoExecuteInput?.checked || false
     };
   }
 
@@ -78,6 +146,7 @@ class EditForm {
     this.patternInput.value = shortcut.pattern || '';
     this.targetInput.value = shortcut.target || '';
     this.openNewTabInput.checked = !!shortcut.openNewTab;
+    this.autoExecuteInput.checked = !!shortcut.autoExecute;
     
     this.editIndex = index;
   }

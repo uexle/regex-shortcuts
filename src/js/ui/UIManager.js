@@ -49,6 +49,10 @@ class UIManager {
     });
 
     // Configurar formulário
+    this.editForm.onValidationError((errorMessage) => {
+      this.message.error(errorMessage);
+    });
+    
     this.editForm.onSubmit(async (data, index) => {
       await this.handleFormSubmit(data, index);
     });

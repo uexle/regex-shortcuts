@@ -115,6 +115,17 @@
         </label>
       </div>
 
+      <!-- Auto Execute Option -->
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input id="auto-execute" type="checkbox" aria-label="Executar automaticamente ao acessar páginas">
+          Executar automaticamente
+        </label>
+        <small class="form-hint">
+          Quando ativado, este atalho será executado automaticamente ao acessar páginas que correspondem ao padrão
+        </small>
+      </div>
+
       <!-- Submit Button -->
       <button type="submit">Salvar</button>
     </form>
@@ -133,7 +144,12 @@
           <i class="bi shortcut-icon" aria-hidden="true"></i>
         </button>
       </div>
-      <div class="shortcut-name"></div>
+      <div class="shortcut-name">
+        <span class="auto-execute-badge hidden" title="Execução automática ativada">
+          <i class="bi bi-lightning-fill" aria-hidden="true"></i>
+        </span>
+        <span class="shortcut-name-text"></span>
+      </div>
       <div class="shortcut-actions">
         <button class="edit-btn" type="button" data-action="edit">Editar</button>
         <button class="delete-btn" type="button" data-action="delete">Excluir</button>
