@@ -28,6 +28,34 @@ const loadShortcuts = async () => {
 // ============================================================================
 
 /**
+ * Normaliza uma URL, adicionando protocolo se necessário
+ * @param {string} url - URL a normalizar
+ * @returns {string} URL normalizada
+ * @private
+ */
+const normalizeUrl = (url) => {
+  if (!url || typeof url !== 'string') {
+    return url;
+  }
+  
+  const trimmed = url.trim();
+  
+  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) {
+    return trimmed;
+  }
+  
+  if (/^(localhost|(\d{1,3}\.){3}\d{1,3})(:\d+)?/.test(trimmed)) {
+    return `http://${trimmed}`;
+  }
+  
+  if (/^([a-z0-9-]+\.)+[a-z]{2,}/.test(trimmed) || trimmed.includes('/')) {
+    return `https://${trimmed}`;
+  }
+  
+  return `https://${trimmed}`;
+};
+
+/**
  * Substitui placeholders ($1, $2, etc.) em uma string com valores do match
  * @param {string} template - String com placeholders
  * @param {Array} matches - Array de matches da regex
@@ -89,13 +117,14 @@ const applyShortcutToTab = async (tabId, url, shortcut) => {
     }
     
     const destination = replacePlaceholders(shortcut.target, match);
+    const normalizedDestination = normalizeUrl(destination);
     
-    console.log(`[Auto-Exec] "${shortcut.name}": ${url} → ${destination}`);
+    console.log(`[Auto-Exec] "${shortcut.name}": ${url} → ${normalizedDestination}`);
     
     if (shortcut.openNewTab) {
-      await chrome.tabs.create({ url: destination });
+      await chrome.tabs.create({ url: normalizedDestination });
     } else {
-      await chrome.tabs.update(tabId, { url: destination });
+      await chrome.tabs.update(tabId, { url: normalizedDestination });
     }
   } catch (error) {
     console.error(`[Auto-Exec Erro] "${shortcut.name}":`, error);
