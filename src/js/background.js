@@ -19,7 +19,7 @@ let isFirstStart = true;
  */
 const loadShortcuts = async () => {
   return new Promise((resolve) => {
-    chrome.storage.local.get(['shortcuts'], (result) => {
+    chrome.storage.sync.get({ shortcuts: [] }, (result) => {
       resolve(result.shortcuts || []);
     });
   });
@@ -154,6 +154,7 @@ const checkAndApplyAutoExecuteShortcuts = async (tabId, url) => {
  * Handler: Quando uma aba é atualizada/carregada
  */
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    console.log(`[Auto-Exec] onUpdated: tabId=${tabId}, status=${changeInfo.status}, url=${tab.url}`);
   if (changeInfo.status === 'complete' && tab.url) {
     checkAndApplyAutoExecuteShortcuts(tabId, tab.url);
   }
